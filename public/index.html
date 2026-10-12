@@ -26,9 +26,13 @@
         .token-type-selector label { cursor: pointer; font-weight: bold; color: #fff; font-size: 14px; }
         .token-type-selector input[type="radio"] { accent-color: #00ffcc; margin-right: 5px; }
 
-        input { width: 90%; background: #030303; color: #00ffcc; border: 1px solid #333; padding: 10px; margin: 6px 0; border-radius: 4px; outline: none; box-sizing: border-box; }
+        .input-group { margin: 8px 0; text-align: left; }
+        .input-group label { font-size: 11px; color: #aaa; display: block; margin-bottom: 3px; }
+        input { width: 100%; background: #030303; color: #00ffcc; border: 1px solid #333; padding: 10px; border-radius: 4px; outline: none; box-sizing: border-box; }
         
-        .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
+        .section-title { color: #ff0055; font-size: 13px; margin: 15px 0 5px 0; border-bottom: 1px solid #222; padding-bottom: 3px; text-align: left; }
+        .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 5px; }
+        
         button { width: 100%; background: #151515; color: #00ffcc; border: 1px solid #00ffcc; padding: 10px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 11px; transition: 0.2s; }
         button:hover { background: #00ffcc; color: #000; box-shadow: 0 0 10px #00ffcc; }
         button.danger { border-color: #ff0055; color: #ff0055; grid-column: span 2; }
@@ -41,7 +45,7 @@
 <body>
     <div class="welcome-banner">
         <h2>Welcome to GRoUpKh6r Portal</h2>
-        <p>مرحباً بك يا وحش، أدخل بياناتك وتحكم بكل شيء بضغطة زر وبأقصى سرعة!</p>
+        <p>أهلاً بك يا وحش، أدخل التوكن والآيدي، تحكم بالأسماء والويبهوكات والسبام بضغطة زر!</p>
     </div>
 
     <div class="skull">
@@ -55,8 +59,8 @@
     </div>
     <div class="rights">GRoUpKh6r#91 - Supreme Control Panel</div>
     
-    <!-- أغنية درب المهالك لـ كلاش (مع تكرار تلقائي loop) -->
-    <audio id="bgAudio" src="https://www.youtube.com/watch?v=BdXFz8ESpLc" loop></audio>
+    <!-- أغنية حماسية مضمونة التشغيل مع تكرار تلقائي بلا توقف -->
+    <audio id="bgAudio" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3" loop></audio>
 
     <div class="container">
         <div class="token-type-selector">
@@ -64,10 +68,33 @@
             <label><input type="radio" name="tokenType" value="bot"> Bot Token</label>
         </div>
 
-        <input type="password" id="token" placeholder="Enter Token Here"><br>
-        <input type="text" id="guildId" placeholder="Enter Target Server ID"><br>
-        <input type="text" id="customName" placeholder="Custom Name / Spam Text"><br>
+        <div class="input-group">
+            <label>DISCORD TOKEN:</label>
+            <input type="password" id="token" placeholder="Enter Token Here">
+        </div>
         
+        <div class="input-group">
+            <label>TARGET SERVER ID:</label>
+            <input type="text" id="guildId" placeholder="Enter Server ID">
+        </div>
+
+        <div class="section-title">CUSTOM CONFIGURATION (Names / Server Name)</div>
+        <div class="input-group">
+            <label>Target / New Name (For Channels, Roles, Members, Server):</label>
+            <input type="text" id="targetName" placeholder="e.g. GRoUpKh6r-Nuked">
+        </div>
+
+        <div class="section-title">WEBHOOK CONFIGURATION</div>
+        <div class="input-group">
+            <label>Webhook Name (For created webhooks):</label>
+            <input type="text" id="webhookName" placeholder="e.g. GRoUpKh6r-Hook">
+        </div>
+        <div class="input-group">
+            <label>Spam Message Text:</label>
+            <input type="text" id="spamText" placeholder="e.g. @everyone GRoUpKh6r#91 ON TOP">
+        </div>
+
+        <div class="section-title">EXECUTION PANEL</div>
         <div class="btn-grid">
             <button class="danger" onclick="runCmd('nuke_all')">TOTAL_NUKE</button>
             <button onclick="runCmd('create_channels')">CREATE_CHANNELS</button>
@@ -92,7 +119,6 @@
     <script>
         const socket = io();
         
-        // تشغيل الموسيقى وتكرارها بلا توقف
         const audio = document.getElementById('bgAudio');
         audio.play().catch(() => {});
         document.addEventListener('click', () => { audio.play(); }, { once: true });
@@ -101,7 +127,9 @@
             const tokenType = document.querySelector('input[name="tokenType"]:checked').value;
             const token = document.getElementById('token').value;
             const guildId = document.getElementById('guildId').value;
-            const customName = document.getElementById('customName').value;
+            const targetName = document.getElementById('targetName').value;
+            const webhookName = document.getElementById('webhookName').value;
+            const spamText = document.getElementById('spamText').value;
             
             if(!token || !guildId) {
                 document.getElementById('log').innerText = "[!] Please enter Token and Server ID";
@@ -109,7 +137,7 @@
             }
 
             document.getElementById('log').innerText = "[*] Executing...";
-            socket.emit('execute_action', { tokenType, token, guildId, action, customName, spamText: customName });
+            socket.emit('execute_action', { tokenType, token, guildId, action, targetName, webhookName, spamText });
         }
 
         socket.on('status', (data) => {

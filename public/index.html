@@ -3,7 +3,7 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>GRoUpKh6r#91 | Nuke & Instant Webhook Engine</title>
+    <title>GRoUpKh6r#91 | Ultimate Control Panel</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, sans-serif; }
         body { background: #07090e; color: #f3f4f6; min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 20px; }
@@ -16,7 +16,7 @@
         input, select, textarea { width: 100%; padding: 12px; background: #1f2937; border: 1px solid #374151; border-radius: 8px; color: #fff; margin-bottom: 15px; font-size: 14px; }
         input:focus, textarea:focus { border-color: #ef4444; outline: none; box-shadow: 0 0 8px rgba(239, 68, 68, 0.4); }
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .btn-grid { display: grid; grid-template-columns: 1fr; gap: 12px; margin-top: 15px; }
+        .btn-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-top: 15px; }
         button { background: #1f2937; color: #fff; border: 1px solid #374151; padding: 14px; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.2s; text-align: center; }
         button:hover { background: #ef4444; border-color: #dc2626; transform: translateY(-2px); box-shadow: 0 4px 15px rgba(239, 68, 68, 0.5); }
         .danger-btn { background: #7f1d1d; border-color: #991b1b; }
@@ -33,13 +33,11 @@
     </header>
 
     <div class="container">
-        <!-- راب أجنبي عالمي حماسي ومضمون التشغيل -->
         <div class="section">
             <label>مشغل الصوت (Hip-Hop / Rap Stream)</label>
             <audio controls autoplay loop>
                 <source src="https://stream.zeno.fm/f3wvbbqmdg8uv" type="audio/mpeg">
                 <source src="https://icecast.omroep.nl/funx-hiphop-bb" type="audio/mpeg">
-                متصفحك لا يدعم مشغل الصوت.
             </audio>
         </div>
 
@@ -64,27 +62,35 @@
 
         <div class="grid">
             <div class="section">
-                <label>Target Name (Channels/Roles/Server Name)</label>
+                <label>Target Name (الاسم الجديد للرومات، الرتب، الأعضاء، السيرفر)</label>
                 <input type="text" id="targetName" value="GRoUpKh6r-nuke">
             </div>
             <div class="section">
-                <label>Webhook Name</label>
+                <label>Webhook Name (اسم ويبهوكات السبام)</label>
                 <input type="text" id="webhookName" value="GRoUpKh6r-Spam">
             </div>
         </div>
 
         <div class="section">
-            <label>Spam Payload Message (رسالة السبام التلقائية)</label>
+            <label>Spam Payload Message (رسالة السبام)</label>
             <textarea id="spamMessage" rows="2">@everyone https://discord.gg/vanta-nuke-x GRoUpKh6r#91 ON TOP</textarea>
         </div>
 
-        <label>Execution Panel</label>
+        <label>Execution Panel (الأوامر المستقلة)</label>
         <div class="btn-grid">
-            <button onclick="runAction('auto_nuke_spawn')" class="danger-btn">⚡ LAUNCH AUTO-NUKE & INSTANT WEBHOOK SPAM (تشغيل شامل وتلقائي)</button>
-            <button onclick="runAction('stop_all_spam')">Stop All Spam Loops (إيقاف السبام)</button>
+            <button onclick="runAction('create_channels')">Create Channels (إنشاء رومات)</button>
+            <button onclick="runAction('delete_channels')" class="danger-btn">Delete Channels (حذف الرومات)</button>
+            <button onclick="runAction('create_roles')">Create Roles (إنشاء رتب)</button>
+            <button onclick="runAction('delete_roles')" class="danger-btn">Delete Roles (حذف الرتب)</button>
+            <button onclick="runAction('rename_server')">Rename Server (تعديل السيرفر)</button>
+            <button onclick="runAction('rename_members')" class="danger-btn">Rename All Members (تعديل الأعضاء)</button>
+            <button onclick="runAction('start_webhook_spam')" class="danger-btn">🔥 Webhook Spam (تفعيل سبام الويبهوكات)</button>
+            <button onclick="runAction('ban_all')" class="danger-btn">Ban All Members (باند الجميع)</button>
+            <button onclick="runAction('kick_all')" class="danger-btn">Kick All Members (طرد الجميع)</button>
+            <button onclick="runAction('stop_all_spam')">Stop All Spam (إيقاف السبام)</button>
         </div>
 
-        <div id="console">[7bl] System ready. Group: GRoUpKh6r#91. Guild ID locked: 1557017152802783268</div>
+        <div id="console">[7bl] System ready. Group: GRoUpKh6r#91. All command buttons loaded.</div>
     </div>
 
     <script>

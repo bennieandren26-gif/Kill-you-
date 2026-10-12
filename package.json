@@ -1,16 +1,16 @@
 {
-  "name": "groupkh6r-panel",
-  "version": "1.0.0",
-  "description": "GRoUpKh6r Control Center Dashboard",
+  "name": "gr0upkh6r-panel",
+  "version": "2.0.0",
+  "description": "GRoUpKh6r#91 Ultimate Nuke Panel",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
   },
   "dependencies": {
     "express": "^4.19.2",
-    "node-fetch": "^3.3.2"
+    "discord.js": "^14.14.1"
   },
   "engines": {
-    "node": ">=18.x"
+    "node": ">=18.0.0"
   }
 }

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GRoUpKh6r#91 - Supreme Nuke Panel</title>
+    <style>
+        body { background: #070707; color: #00ffcc; font-family: monospace; text-align: center; margin: 0; padding: 10px; }
+        .skull { color: #ff0055; font-size: 20px; font-weight: bold; text-shadow: 0 0 10px #ff0055; margin-top: 10px; white-space: pre; }
+        .container { max-width: 480px; margin: 0 auto; background: #111; border: 1px solid #222; padding: 20px; border-radius: 8px; box-shadow: 0 0 15px rgba(0,255,204,0.1); }
+        
+        .token-type-selector {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 10px 0;
+            background: #080808;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #222;
+        }
+        .token-type-selector label {
+            cursor: pointer;
+            font-weight: bold;
+            color: #fff;
+        }
+        .token-type-selector input[type="radio"] {
+            accent-color: #00ffcc;
+            margin-right: 5px;
+        }
+
+        input { width: 90%; background: #050505; color: #00ffcc; border: 1px solid #333; padding: 10px; margin: 8px 0; border-radius: 4px; outline: none; box-sizing: border-box; }
+        button { width: 90%; background: #1a1a1a; color: #00ffcc; border: 1px solid #00ffcc; padding: 12px; margin: 6px 0; border-radius: 4px; cursor: pointer; font-weight: bold; transition: 0.2s; }
+        button:hover { background: #00ffcc; color: #000; box-shadow: 0 0 10px #00ffcc; }
+        button.danger { border-color: #ff0055; color: #ff0055; }
+        button.danger:hover { background: #ff0055; color: #000; box-shadow: 0 0 10px #ff0055; }
+        #log { margin-top: 15px; color: #ff0055; font-size: 14px; word-break: break-all; min-height: 30px; }
+        .rights { color: #888; font-size: 12px; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+    <div class="skull">
+      ____---____
+    /             \
+   |   /\     /\   |
+   |   ~~     ~~   |
+   |      ---      |
+    \  ____  /
+     \_______/
+    </div>
+    <div class="rights">GRoUpKh6r#91 Supreme Matrix</div>
+    
+    <audio id="bgAudio" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" loop></audio>
+
+    <div class="container">
+        <!-- خيار التحديد بين توكن حساب أو توكن بوت -->
+        <div class="token-type-selector">
+            <label>
+                <input type="radio" name="tokenType" value="user" checked> User Token
+            </label>
+            <label>
+                <input type="radio" name="tokenType" value="bot"> Bot Token
+            </label>
+        </div>
+
+        <input type="password" id="token" placeholder="Enter Token Here"><br>
+        <input type="text" id="guildId" placeholder="Enter Target Server ID"><br>
+        <input type="text" id="customName" placeholder="Custom Name / Spam Text"><br>
+        
+        <button class="danger" onclick="runCmd('nuke_all')">TOTAL_NUKE</button>
+        <button onclick="runCmd('create_channels')">CREATE_CHANNELS</button>
+        <button onclick="runCmd('create_roles')">CREATE_ROLES</button>
+        <button onclick="runCmd('create_webhooks')">CREATE_WEBHOOKS</button>
+        <button class="danger" onclick="runCmd('webhook_spam')">START_WEBHOOK_SPAM</button>
+        <button onclick="runCmd('stop_spam')">STOP_SPAM</button>
+        
+        <div id="log">Status: Idle</div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+        
+        const audio = document.getElementById('bgAudio');
+        audio.play().catch(() => {});
+        document.addEventListener('click', () => { audio.play(); }, { once: true });
+
+        function runCmd(action) {
+            const tokenType = document.querySelector('input[name="tokenType"]:checked').value;
+            const token = document.getElementById('token').value;
+            const guildId = document.getElementById('guildId').value;
+            const customName = document.getElementById('customName').value;
+            
+            if(!token || !guildId) {
+                document.getElementById('log').innerText = "[!] Please enter Token and Server ID";
+                return;
+            }
+
+            document.getElementById('log').innerText = "[*] Executing...";
+            socket.emit('execute_action', { tokenType, token, guildId, action, customName, spamText: customName });
+        }
+
+        socket.on('status', (data) => {
+            document.getElementById('log').innerText = data.msg;
+        });
+    </script>
+</body>
+</html>

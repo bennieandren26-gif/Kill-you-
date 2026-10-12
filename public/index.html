@@ -84,7 +84,7 @@
         async function execute(action) {
             const token = document.getElementById('token').value;
             const guild_id = document.getElementById('guild_id').value;
-            const target_name = document.getElementById('target_name'].value;
+            const target_name = document.getElementById('target_name').value;
             const count = document.getElementById('count').value;
             const server_name = document.getElementById('server_name').value;
             const member_name = document.getElementById('member_name').value;
@@ -98,13 +98,17 @@
 
             log("[~] Executing command: " + action + "...");
 
-            const response = await fetch('/api/execute', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({action, token, guild_id, target_name, count, server_name, member_name, spam_msg, wh_name})
-            });
-            const res = await response.json();
-            log("[>] " + res.status);
+            try {
+                const response = await fetch('/api/execute', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({action, token, guild_id, target_name, count, server_name, member_name, spam_msg, wh_name})
+                });
+                const res = await response.json();
+                log("[>] " + res.status);
+            } catch (err) {
+                log("[!] Connection Error: Failed to reach server.");
+            }
         }
     </script>
 </body>

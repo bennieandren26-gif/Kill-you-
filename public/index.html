@@ -33,8 +33,9 @@
     </header>
 
     <div class="container">
+        <!-- راب زاحف وحماسي مضمون التشغيل -->
         <div class="section">
-            <label>مشغل الصوت (Hip-Hop / Rap Stream)</label>
+            <label>مشغل الصوت (Aggressive Rap / Drift Stream)</label>
             <audio controls autoplay loop>
                 <source src="https://stream.zeno.fm/f3wvbbqmdg8uv" type="audio/mpeg">
                 <source src="https://icecast.omroep.nl/funx-hiphop-bb" type="audio/mpeg">
@@ -62,35 +63,37 @@
 
         <div class="grid">
             <div class="section">
-                <label>Target Name (الاسم الجديد للرومات، الرتب، الأعضاء، السيرفر)</label>
+                <label>Target Name (الاسم للرومات، الرتب، السيرفر)</label>
                 <input type="text" id="targetName" value="GRoUpKh6r-nuke">
             </div>
             <div class="section">
-                <label>Webhook Name (اسم ويبهوكات السبام)</label>
+                <label>Webhook Name (اسم الويبهوكات)</label>
                 <input type="text" id="webhookName" value="GRoUpKh6r-Spam">
             </div>
         </div>
 
         <div class="section">
-            <label>Spam Payload Message (رسالة السبام)</label>
+            <label>Spam Payload Message (رسالة السبام التلقائية)</label>
             <textarea id="spamMessage" rows="2">@everyone https://discord.gg/vanta-nuke-x GRoUpKh6r#91 ON TOP</textarea>
         </div>
 
-        <label>Execution Panel (الأوامر المستقلة)</label>
+        <label>Execution Panel (الأوامر الكاملة والمستقلة)</label>
         <div class="btn-grid">
-            <button onclick="runAction('create_channels')">Create Channels (إنشاء رومات)</button>
+            <button onclick="runAction('create_channels')">Create Channels (إنشاء رومات + سبام)</button>
             <button onclick="runAction('delete_channels')" class="danger-btn">Delete Channels (حذف الرومات)</button>
+            <button onclick="runAction('rename_channels')" class="danger-btn">Rename Channels (تعديل الرومات + سبام)</button>
             <button onclick="runAction('create_roles')">Create Roles (إنشاء رتب)</button>
             <button onclick="runAction('delete_roles')" class="danger-btn">Delete Roles (حذف الرتب)</button>
-            <button onclick="runAction('rename_server')">Rename Server (تعديل السيرفر)</button>
+            <button onclick="runAction('rename_roles')">Rename Roles (تعديل الرتب)</button>
+            <button onclick="runAction('rename_server')">Rename Server (تعديل اسم السيرفر)</button>
             <button onclick="runAction('rename_members')" class="danger-btn">Rename All Members (تعديل الأعضاء)</button>
             <button onclick="runAction('start_webhook_spam')" class="danger-btn">🔥 Webhook Spam (تفعيل سبام الويبهوكات)</button>
+            <button onclick="runAction('stop_all_spam')">Stop All Spam (إيقاف السبام)</button>
             <button onclick="runAction('ban_all')" class="danger-btn">Ban All Members (باند الجميع)</button>
             <button onclick="runAction('kick_all')" class="danger-btn">Kick All Members (طرد الجميع)</button>
-            <button onclick="runAction('stop_all_spam')">Stop All Spam (إيقاف السبام)</button>
         </div>
 
-        <div id="console">[7bl] System ready. Group: GRoUpKh6r#91. All command buttons loaded.</div>
+        <div id="console">[7bl] System ready. Group: GRoUpKh6r#91. All commands active and mapped.</div>
     </div>
 
     <script>

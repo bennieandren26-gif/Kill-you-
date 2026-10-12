@@ -1,148 +1,111 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GRoUpKh6r#91 - Supreme Nuke Panel</title>
+    <title>GRoUpKh6r#91 - Control Panel</title>
     <style>
-        body { background: #050505; color: #00ffcc; font-family: monospace; text-align: center; margin: 0; padding: 10px; }
-        .welcome-banner { background: #111; border: 1px solid #ff0055; padding: 12px; margin: 10px auto; max-width: 500px; border-radius: 6px; box-shadow: 0 0 15px rgba(255,0,85,0.2); }
-        .welcome-banner h2 { color: #ff0055; margin: 0 0 5px 0; font-size: 18px; }
-        .welcome-banner p { color: #fff; margin: 0; font-size: 13px; }
-        
-        .skull { color: #ff0055; font-size: 18px; font-weight: bold; text-shadow: 0 0 10px #ff0055; margin-top: 10px; white-space: pre; }
-        .container { max-width: 500px; margin: 0 auto; background: #0c0c0c; border: 1px solid #222; padding: 15px; border-radius: 8px; box-shadow: 0 0 15px rgba(0,255,204,0.1); }
-        
-        .token-type-selector {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            margin: 10px 0;
-            background: #111;
-            padding: 10px;
-            border-radius: 5px;
-            border: 1px solid #333;
-        }
-        .token-type-selector label { cursor: pointer; font-weight: bold; color: #fff; font-size: 14px; }
-        .token-type-selector input[type="radio"] { accent-color: #00ffcc; margin-right: 5px; }
-
-        .input-group { margin: 8px 0; text-align: left; }
-        .input-group label { font-size: 11px; color: #aaa; display: block; margin-bottom: 3px; }
-        input { width: 100%; background: #030303; color: #00ffcc; border: 1px solid #333; padding: 10px; border-radius: 4px; outline: none; box-sizing: border-box; }
-        
-        .section-title { color: #ff0055; font-size: 13px; margin: 15px 0 5px 0; border-bottom: 1px solid #222; padding-bottom: 3px; text-align: left; }
-        .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 5px; }
-        
-        button { width: 100%; background: #151515; color: #00ffcc; border: 1px solid #00ffcc; padding: 10px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 11px; transition: 0.2s; }
-        button:hover { background: #00ffcc; color: #000; box-shadow: 0 0 10px #00ffcc; }
-        button.danger { border-color: #ff0055; color: #ff0055; grid-column: span 2; }
-        button.danger:hover { background: #ff0055; color: #000; box-shadow: 0 0 10px #ff0055; }
-        
-        #log { margin-top: 15px; color: #ff0055; font-size: 13px; word-break: break-all; min-height: 25px; background: #030303; padding: 8px; border-radius: 4px; border: 1px solid #222; }
-        .rights { color: #888; font-size: 12px; margin: 10px 0; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: monospace; }
+        body { background: #0a0a0a; color: #00ff66; padding: 20px; }
+        h1 { text-align: center; border-bottom: 2px solid #00ff66; padding-bottom: 10px; margin-bottom: 20px; font-size: 24px; text-shadow: 0 0 10px rgba(0,255,102,0.5); }
+        .panel { background: #121212; border: 1px solid #00ff66; padding: 20px; margin-bottom: 20px; border-radius: 4px; box-shadow: 0 0 15px rgba(0,255,102,0.1); }
+        label { display: block; margin-top: 10px; color: #fff; font-size: 14px; }
+        input, select, textarea { width: 100%; padding: 10px; background: #1a1a1a; border: 1px solid #333; color: #00ff66; margin-top: 5px; border-radius: 3px; }
+        input:focus { border-color: #00ff66; outline: none; box-shadow: 0 0 5px rgba(0,255,102,0.5); }
+        button { background: #00ff66; color: #000; border: none; padding: 12px; width: 100%; margin-top: 15px; font-weight: bold; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; transition: 0.2s; }
+        button:hover { background: #00cc52; box-shadow: 0 0 10px #00ff66; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; }
+        .card { background: #181818; border: 1px solid #222; padding: 15px; border-radius: 4px; }
+        .card h3 { color: #fff; font-size: 16px; margin-bottom: 10px; border-bottom: 1px dashed #333; padding-bottom: 5px; }
+        #console { background: #000; border: 1px solid #00ff66; padding: 15px; height: 180px; overflow-y: scroll; color: #00ff66; font-size: 12px; margin-top: 20px; }
+        .audio-box { text-align: center; margin-bottom: 20px; }
     </style>
 </head>
 <body>
-    <div class="welcome-banner">
-        <h2>Welcome to GRoUpKh6r Portal</h2>
-        <p>أهلاً بك يا وحش، أدخل التوكن والآيدي، تحكم بالأسماء والويبهوكات والسبام بضغطة زر!</p>
+    <div class="audio-box">
+        <!-- راب درب المهالك - كلاش -->
+        <iframe width="0" height="0" src="https://www.youtube.com/embed/BdXFz8ESpLc?autoplay=1&loop=1&playlist=BdXFz8ESpLc" frameborder="0" allow="autoplay"></iframe>
     </div>
 
-    <div class="skull">
-      ____---____
-    /             \
-   |   /\     /\   |
-   |   ~~     ~~   |
-   |      ---      |
-    \  ____  /
-     \_______/
-    </div>
-    <div class="rights">GRoUpKh6r#91 - Supreme Control Panel</div>
-    
-    <!-- أغنية حماسية مضمونة التشغيل مع تكرار تلقائي بلا توقف -->
-    <audio id="bgAudio" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3" loop></audio>
+    <h1>[ GRoUpKh6r#91 ] DISCORD ASSAULT PANEL</h1>
 
-    <div class="container">
-        <div class="token-type-selector">
-            <label><input type="radio" name="tokenType" value="user" checked> User Token</label>
-            <label><input type="radio" name="tokenType" value="bot"> Bot Token</label>
-        </div>
-
-        <div class="input-group">
-            <label>DISCORD TOKEN:</label>
-            <input type="password" id="token" placeholder="Enter Token Here">
-        </div>
-        
-        <div class="input-group">
-            <label>TARGET SERVER ID:</label>
-            <input type="text" id="guildId" placeholder="Enter Server ID">
-        </div>
-
-        <div class="section-title">CUSTOM CONFIGURATION (Names / Server Name)</div>
-        <div class="input-group">
-            <label>Target / New Name (For Channels, Roles, Members, Server):</label>
-            <input type="text" id="targetName" placeholder="e.g. GRoUpKh6r-Nuked">
-        </div>
-
-        <div class="section-title">WEBHOOK CONFIGURATION</div>
-        <div class="input-group">
-            <label>Webhook Name (For created webhooks):</label>
-            <input type="text" id="webhookName" placeholder="e.g. GRoUpKh6r-Hook">
-        </div>
-        <div class="input-group">
-            <label>Spam Message Text:</label>
-            <input type="text" id="spamText" placeholder="e.g. @everyone GRoUpKh6r#91 ON TOP">
-        </div>
-
-        <div class="section-title">EXECUTION PANEL</div>
-        <div class="btn-grid">
-            <button class="danger" onclick="runCmd('nuke_all')">TOTAL_NUKE</button>
-            <button onclick="runCmd('create_channels')">CREATE_CHANNELS</button>
-            <button onclick="runCmd('delete_channels')">DELETE_CHANNELS</button>
-            <button onclick="runCmd('create_roles')">CREATE_ROLES</button>
-            <button onclick="runCmd('delete_roles')">DELETE_ROLES</button>
-            <button onclick="runCmd('rename_channels')">RENAME_CHANNELS</button>
-            <button onclick="runCmd('rename_roles')">RENAME_ROLES</button>
-            <button onclick="runCmd('rename_server')">RENAME_SERVER</button>
-            <button onclick="runCmd('rename_members')">RENAME_MEMBERS</button>
-            <button class="danger" onclick="runCmd('ban_members')">BAN_ALL_MEMBERS</button>
-            <button class="danger" onclick="runCmd('kick_members')">KICK_ALL_MEMBERS</button>
-            <button onclick="runCmd('create_webhooks')">CREATE_WEBHOOKS</button>
-            <button class="danger" onclick="runCmd('webhook_spam')">START_WEBHOOK_SPAM</button>
-            <button onclick="runCmd('stop_spam')">STOP_SPAM</button>
-        </div>
-        
-        <div id="log">Status: Idle</div>
+    <div class="panel">
+        <label>Authentication Token (Bot / User Token):</label>
+        <input type="password" id="token" placeholder="أدخل توكن الحساب أو البوت هنا">
+        <label>Target Server ID:</label>
+        <input type="text" id="guild_id" placeholder="أيدي السيرفر المستهدف">
     </div>
 
-    <script src="/socket.io/socket.io.js"></script>
+    <div class="grid">
+        <div class="card">
+            <h3>Structure Ops</h3>
+            <label>Name (Channels / Roles):</label>
+            <input type="text" id="target_name" value="GRoUpKh6r">
+            <label>Count:</label>
+            <input type="number" id="count" value="50">
+            <button onclick="execute('create_channels')">إنشاء رومات</button>
+            <button onclick="execute('create_roles')">إنشاء رولات</button>
+            <button onclick="execute('delete_channels')">حذف جميع الرومات</button>
+            <button onclick="execute('delete_roles')">حذف جميع الرولات</button>
+        </div>
+
+        <div class="card">
+            <h3>Server & Members</h3>
+            <label>New Server Name:</label>
+            <input type="text" id="server_name" value="GRoUpKh6r Raided">
+            <button onclick="execute('rename_server')">تعديل اسم السيرفر</button>
+            <label>Members Target Name:</label>
+            <input type="text" id="member_name" value="GRoUpKh6r Slaved">
+            <button onclick="execute('rename_members')">تعديل اسماء جميع الاعضاء</button>
+            <button onclick="execute('kick_all')">طرد جميع الاعضاء</button>
+            <button onclick="execute('ban_all')">باند جميع الاعضاء</button>
+        </div>
+
+        <div class="card">
+            <h3>Webhooks & Hyper-Spam</h3>
+            <label>Spam Message Payload:</label>
+            <textarea id="spam_msg" rows="2">@everyone GRoUpKh6r#91 ON TOP</textarea>
+            <label>Webhook Name:</label>
+            <input type="text" id="wh_name" value="GRoUpKh6r Spam">
+            <button onclick="execute('create_webhooks')">إنشاء ويبهوكات بكل الرومات</button>
+            <button onclick="execute('start_spam')">بدء السبام (لا ينتهي)</button>
+            <button onclick="execute('stop_spam')">إيقاف السبام</button>
+        </div>
+    </div>
+
+    <div id="console">[+] Panel initialized. Waiting for execution command...</div>
+
     <script>
-        const socket = io();
-        
-        const audio = document.getElementById('bgAudio');
-        audio.play().catch(() => {});
-        document.addEventListener('click', () => { audio.play(); }, { once: true });
+        function log(text) {
+            const c = document.getElementById('console');
+            c.innerHTML += "<br>" + text;
+            c.scrollTop = c.scrollHeight;
+        }
 
-        function runCmd(action) {
-            const tokenType = document.querySelector('input[name="tokenType"]:checked').value;
+        async function execute(action) {
             const token = document.getElementById('token').value;
-            const guildId = document.getElementById('guildId').value;
-            const targetName = document.getElementById('targetName').value;
-            const webhookName = document.getElementById('webhookName').value;
-            const spamText = document.getElementById('spamText').value;
-            
-            if(!token || !guildId) {
-                document.getElementById('log').innerText = "[!] Please enter Token and Server ID";
+            const guild_id = document.getElementById('guild_id').value;
+            const target_name = document.getElementById('target_name'].value;
+            const count = document.getElementById('count').value;
+            const server_name = document.getElementById('server_name').value;
+            const member_name = document.getElementById('member_name').value;
+            const spam_msg = document.getElementById('spam_msg').value;
+            const wh_name = document.getElementById('wh_name').value;
+
+            if(!token || !guild_id) {
+                log("[!] Error: Token and Guild ID are required.");
                 return;
             }
 
-            document.getElementById('log').innerText = "[*] Executing...";
-            socket.emit('execute_action', { tokenType, token, guildId, action, targetName, webhookName, spamText });
-        }
+            log("[~] Executing command: " + action + "...");
 
-        socket.on('status', (data) => {
-            document.getElementById('log').innerText = data.msg;
-        });
+            const response = await fetch('/api/execute', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({action, token, guild_id, target_name, count, server_name, member_name, spam_msg, wh_name})
+            });
+            const res = await response.json();
+            log("[>] " + res.status);
+        }
     </script>
 </body>
 </html>

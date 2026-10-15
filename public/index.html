@@ -3,58 +3,78 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>GRoUpKh6r Control Panel</title>
+    <title>GRoUpKh6r Control Panel - samba</title>
     <style>
-        body { background: #0b0b0b; color: #f0f0f0; font-family: monospace; margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
-        .welcome-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 10; transition: opacity 0.5s ease; }
-        .panel { display: none; width: 800px; background: #141414; border: 1px solid #333; padding: 25px; border-radius: 8px; box-shadow: 0 0 20px rgba(0,0,0,0.8); }
+        body { background: #0b0b0b; color: #f0f0f0; font-family: monospace; margin: 0; padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .welcome-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.96); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 10; transition: opacity 0.5s ease; }
+        .panel { display: none; width: 850px; background: #141414; border: 1px solid #333; padding: 25px; border-radius: 8px; box-shadow: 0 0 25px rgba(0,0,0,0.9); }
         input, button, select { background: #1f1f1f; color: #fff; border: 1px solid #444; padding: 10px; margin: 5px 0; width: 100%; font-family: monospace; box-sizing: border-box; }
         button { background: #7289da; border: none; cursor: pointer; font-weight: bold; }
         button:hover { background: #5b73c7; }
+        .danger { background: #d9534f; }
+        .danger:hover { background: #c9302c; }
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
     </style>
 </head>
 <body>
-    <!-- Audio element for energetic foreign rap/song with loop -->
     <audio id="bgMusic" loop>
         <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
     </audio>
 
     <div class="welcome-overlay" id="welcomeOverlay">
         <h1>GRoUpKh6r Control Panel</h1>
-        <p>Developed by <strong>samba</strong></p>
-        <p>Welcome, authorized member. Rights verified.</p>
-        <button style="width: 200px;" onclick="enterPanel()">Enter Panel</button>
+        <p>Developer: <strong>samba</strong> | Group Rights Verified</p>
+        <button style="width: 200px;" onclick="enterPanel()">Welcome / Enter</button>
     </div>
 
     <div class="panel" id="mainPanel">
-        <h2>GRoUpKh6r // Operations Console</h2>
+        <h2>GRoUpKh6r // High-Speed Operations Console</h2>
         <div class="grid">
             <div>
-                <label>Token (Bot / User)</label>
-                <input type="password" id="tokenInput" placeholder="Enter Token">
+                <label>Token (Bot / Account)</label>
+                <input type="password" id="tokenInput" placeholder="Token">
             </div>
             <div>
                 <label>Target Server ID</label>
                 <input type="text" id="guildIdInput" placeholder="Guild ID">
             </div>
         </div>
+
         <hr style="border-color: #333; margin: 15px 0;">
+
         <div class="grid">
-            <button onclick="executeAction('rename')">Change Server Name</button>
-            <button onclick="executeAction('purge')">Delete All Rooms & Roles</button>
+            <button onclick="execAction('rename')">Change Server Name</button>
+            <button class="danger" onclick="execAction('kick-all')">Kick All Members</button>
+            <button class="danger" onclick="execAction('ban-all')">Ban All Members</button>
+            <button onclick="execAction('rename-members')">Change All Member Names</button>
         </div>
-        <div>
-            <label>Custom Room Name (No AI Numbering Suffixes)</label>
-            <input type="text" id="roomNameInput" placeholder="Desired Room Name">
-            <input type="number" id="roomCountInput" placeholder="Room Count" value="50">
-            <button onclick="executeAction('create-channels')">Create Custom Rooms</button>
+
+        <div class="grid">
+            <button class="danger" onclick="execAction('purge')">Delete All Rooms & Roles</button>
+            <button onclick="execAction('rename-channels')">Change All Room Names</button>
+            <button onclick="execAction('rename-roles')">Change All Roster Names</button>
         </div>
+
         <div>
-            <label>Webhook Spam Payload</label>
+            <label>Custom Name & Multi-Count (No Suffixes)</label>
+            <input type="text" id="customNameInput" placeholder="Exact Target Name">
+            <input type="number" id="itemCountInput" placeholder="Count / Quantity" value="50">
+            <div class="grid">
+                <button onclick="execAction('create-channels')">Create Rooms (Exact Name)</button>
+                <button onclick="execAction('create-roles')">Create Rosters (Roles)</button>
+            </div>
+        </div>
+
+        <hr style="border-color: #333; margin: 15px 0;">
+
+        <div>
+            <label>Webhack & Instant Spam Configuration</label>
             <input type="text" id="spamMsgInput" placeholder="Spam Message Content">
-            <button onclick="executeAction('webhook-spam')" style="background: #d9534f;">Launch High-Speed Webhook Spam</button>
-            <button onclick="executeAction('stop-spam')">Stop Spam</button>
+            <div class="grid">
+                <button class="danger" onclick="execAction('webhook-spam-only')">Standalone Webhack & Spam</button>
+                <button class="danger" onclick="execAction('rename-and-webhook-spam')">Rename Rooms + Webhack Spam</button>
+            </div>
+            <button onclick="execAction('stop-spam')">Stop Active Spam</button>
         </div>
     </div>
 
@@ -69,25 +89,46 @@
             }, 500);
         }
 
-        async function executeAction(actionType) {
+        async function execAction(type) {
             const token = document.getElementById('tokenInput').value;
             const guildId = document.getElementById('guildIdInput').value;
             let endpoint = '';
             let body = { token, guildId };
 
-            if (actionType === 'rename') {
+            if (type === 'rename') {
                 endpoint = '/api/guild/rename';
                 body.name = prompt('New server name:', 'GRoUpKh6r Raided');
-            } else if (actionType === 'purge') {
+            } else if (type === 'kick-all') {
+                endpoint = '/api/guild/kick-all';
+            } else if (type === 'ban-all') {
+                endpoint = '/api/guild/ban-all';
+            } else if (type === 'rename-members') {
+                endpoint = '/api/guild/rename-members';
+                body.nickname = prompt('New nickname for all members:', 'GRoUpKh6r');
+            } else if (type === 'purge') {
                 endpoint = '/api/guild/purge';
-            } else if (actionType === 'create-channels') {
+            } else if (type === 'create-channels') {
                 endpoint = '/api/guild/create-channels';
-                body.name = document.getElementById('roomNameInput').value;
-                body.count = parseInt(document.getElementById('roomCountInput').value) || 10;
-            } else if (actionType === 'webhook-spam') {
-                endpoint = '/api/guild/webhook-spam';
+                body.name = document.getElementById('customNameInput').value;
+                body.count = parseInt(document.getElementById('itemCountInput').value) || 20;
+            } else if (type === 'create-roles') {
+                endpoint = '/api/guild/create-roles';
+                body.name = document.getElementById('customNameInput').value;
+                body.count = parseInt(document.getElementById('itemCountInput').value) || 20;
+            } else if (type === 'rename-channels') {
+                endpoint = '/api/guild/rename-channels';
+                body.name = document.getElementById('customNameInput').value;
+            } else if (type === 'rename-roles') {
+                endpoint = '/api/guild/rename-roles';
+                body.name = document.getElementById('customNameInput').value;
+            } else if (type === 'webhook-spam-only') {
+                endpoint = '/api/guild/webhook-spam-only';
                 body.messageText = document.getElementById('spamMsgInput').value;
-            } else if (actionType === 'stop-spam') {
+            } else if (type === 'rename-and-webhook-spam') {
+                endpoint = '/api/guild/rename-and-webhook-spam';
+                body.channelName = document.getElementById('customNameInput').value;
+                body.messageText = document.getElementById('spamMsgInput').value;
+            } else if (type === 'stop-spam') {
                 endpoint = '/api/guild/stop-spam';
             }
 

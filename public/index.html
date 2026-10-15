@@ -1,71 +1,104 @@
-<!-- language: html, file: index.html, target: Web Hosting / GitHub -->
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<!-- language: HTML, file: public/index.html, target: Browser -->
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GRoUpKh6r - Discord Control Panel</title>
-    <link rel="stylesheet" href="style.css">
+    <title>GRoUpKh6r Control Panel</title>
+    <style>
+        body { background: #0b0b0b; color: #f0f0f0; font-family: monospace; margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
+        .welcome-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 10; transition: opacity 0.5s ease; }
+        .panel { display: none; width: 800px; background: #141414; border: 1px solid #333; padding: 25px; border-radius: 8px; box-shadow: 0 0 20px rgba(0,0,0,0.8); }
+        input, button, select { background: #1f1f1f; color: #fff; border: 1px solid #444; padding: 10px; margin: 5px 0; width: 100%; font-family: monospace; box-sizing: border-box; }
+        button { background: #7289da; border: none; cursor: pointer; font-weight: bold; }
+        button:hover { background: #5b73c7; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    </style>
 </head>
 <body>
+    <!-- Audio element for energetic foreign rap/song with loop -->
     <audio id="bgMusic" loop>
-        <source src="https://example.com/foreign-energetic-song.mp3" type="audio/mpeg">
+        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
     </audio>
 
-    <div id="welcomeScreen" class="overlay">
-        <div class="welcome-box">
-            <h1>مرحباً بك في لوحة تحكم GRoUpKh6r</h1>
-            <p>تطوير: <strong>samba</strong></p>
-            <p class="rights">جميع الحقوق محفوظة لمجموعة GRoUpKh6r وللمطور samba.</p>
-            <button id="enterBtn" class="btn">دخول اللوحة (Welcome)</button>
+    <div class="welcome-overlay" id="welcomeOverlay">
+        <h1>GRoUpKh6r Control Panel</h1>
+        <p>Developed by <strong>samba</strong></p>
+        <p>Welcome, authorized member. Rights verified.</p>
+        <button style="width: 200px;" onclick="enterPanel()">Enter Panel</button>
+    </div>
+
+    <div class="panel" id="mainPanel">
+        <h2>GRoUpKh6r // Operations Console</h2>
+        <div class="grid">
+            <div>
+                <label>Token (Bot / User)</label>
+                <input type="password" id="tokenInput" placeholder="Enter Token">
+            </div>
+            <div>
+                <label>Target Server ID</label>
+                <input type="text" id="guildIdInput" placeholder="Guild ID">
+            </div>
+        </div>
+        <hr style="border-color: #333; margin: 15px 0;">
+        <div class="grid">
+            <button onclick="executeAction('rename')">Change Server Name</button>
+            <button onclick="executeAction('purge')">Delete All Rooms & Roles</button>
+        </div>
+        <div>
+            <label>Custom Room Name (No AI Numbering Suffixes)</label>
+            <input type="text" id="roomNameInput" placeholder="Desired Room Name">
+            <input type="number" id="roomCountInput" placeholder="Room Count" value="50">
+            <button onclick="executeAction('create-channels')">Create Custom Rooms</button>
+        </div>
+        <div>
+            <label>Webhook Spam Payload</label>
+            <input type="text" id="spamMsgInput" placeholder="Spam Message Content">
+            <button onclick="executeAction('webhook-spam')" style="background: #d9534f;">Launch High-Speed Webhook Spam</button>
+            <button onclick="executeAction('stop-spam')">Stop Spam</button>
         </div>
     </div>
 
-    <div id="controlPanel" class="panel hidden">
-        <div class="sidebar">
-            <h2>GRoUpKh6r</h2>
-            <ul>
-                <li class="active" onclick="switchTab('target')">استهداف السيرفر</li>
-                <li onclick="switchTab('spam')">الهجوم والسبام</li>
-            </ul>
-        </div>
-        <div class="main-content">
-            <div id="targetTab" class="tab-content">
-                <h3>إعدادات الاتصال</h3>
-                <div class="form-group">
-                    <label>نوع التوكن:</label>
-                    <select id="tokenType">
-                        <option value="bot">Bot Token</option>
-                        <option value="user">Account Token</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>التوكن:</label>
-                    <input type="password" id="tokenInput" placeholder="أدخل التوكن هنا">
-                </div>
-                <div class="form-group">
-                    <label>معرف السيرفر (Server ID):</label>
-                    <input type="text" id="guildIdInput" placeholder="Server ID">
-                </div>
-                <div class="form-group">
-                    <label>الاسم المستهدف للروم/الرتب:</label>
-                    <input type="text" id="targetNameInput" placeholder="الاسم المطلوب">
-                </div>
-                <button class="btn" onclick="connectServer()">اتصال وتنفيذ العمليات</button>
-            </div>
+    <script>
+        function enterPanel() {
+            const audio = document.getElementById('bgMusic');
+            audio.play().catch(() => {});
+            document.getElementById('welcomeOverlay').style.opacity = '0';
+            setTimeout(() => {
+                document.getElementById('welcomeOverlay').style.display = 'none';
+                document.getElementById('mainPanel').style.display = 'block';
+            }, 500);
+        }
 
-            <div id="spamTab" class="tab-content hidden">
-                <h3>السبام السريع والتحكم الشامل</h3>
-                <div class="form-group">
-                    <label>رسالة السبام (Webhook Spam):</label>
-                    <input type="text" id="spamMessageInput" placeholder="اكتب رسالة السبام هنا">
-                </div>
-                <button class="btn danger" onclick="startNukeAndSpam()">بدء التدمير والسبام الخارق</button>
-                <div id="logConsole" class="console"></div>
-            </div>
-        </div>
-    </div>
+        async function executeAction(actionType) {
+            const token = document.getElementById('tokenInput').value;
+            const guildId = document.getElementById('guildIdInput').value;
+            let endpoint = '';
+            let body = { token, guildId };
 
-    <script src="app.js"></script>
+            if (actionType === 'rename') {
+                endpoint = '/api/guild/rename';
+                body.name = prompt('New server name:', 'GRoUpKh6r Raided');
+            } else if (actionType === 'purge') {
+                endpoint = '/api/guild/purge';
+            } else if (actionType === 'create-channels') {
+                endpoint = '/api/guild/create-channels';
+                body.name = document.getElementById('roomNameInput').value;
+                body.count = parseInt(document.getElementById('roomCountInput').value) || 10;
+            } else if (actionType === 'webhook-spam') {
+                endpoint = '/api/guild/webhook-spam';
+                body.messageText = document.getElementById('spamMsgInput').value;
+            } else if (actionType === 'stop-spam') {
+                endpoint = '/api/guild/stop-spam';
+            }
+
+            const res = await fetch(endpoint, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body)
+            });
+            const data = await res.json();
+            alert(JSON.stringify(data));
+        }
+    </script>
 </body>
 </html>

@@ -1,164 +1,71 @@
+<!-- language: html, file: index.html, target: Web Hosting / GitHub -->
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>GRoUpKh6r#91 - Ultimate Nuker Panel</title>
-    <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: Tahoma, sans-serif; }
-        body { background: #0b0b0b; color: #fff; padding: 20px; }
-        header { text-align: center; margin-bottom: 30px; border-bottom: 2px solid #ff0055; padding-bottom: 15px; }
-        header h1 { color: #ff0055; font-size: 28px; text-shadow: 0 0 10px rgba(255,0,85,0.5); }
-        header p { color: #888; font-size: 14px; margin-top: 5px; }
-        .container { max-width: 900px; margin: 0 auto; background: #141414; border: 1px solid #222; border-radius: 8px; padding: 20px; box-shadow: 0 0 20px rgba(0,0,0,0.8); }
-        .section-title { font-size: 16px; color: #ff0055; margin-bottom: 10px; border-right: 3px solid #ff0055; padding-right: 8px; }
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
-        .full { grid-column: span 2; }
-        label { display: block; font-size: 13px; color: #aaa; margin-bottom: 5px; }
-        input, select, textarea { width: 100%; padding: 10px; background: #1a1a1a; border: 1px solid #333; color: #fff; border-radius: 4px; font-size: 14px; }
-        input:focus, select:focus { border-color: #ff0055; outline: none; }
-        .btn-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-        button.action-btn { background: #1f1f1f; border: 1px solid #333; color: #fff; padding: 12px; border-radius: 4px; cursor: pointer; font-weight: bold; transition: 0.2s; text-align: center; }
-        button.action-btn:hover { background: #ff0055; border-color: #ff0055; box-shadow: 0 0 10px rgba(255,0,85,0.4); }
-        button.danger { border-color: #500; }
-        button.danger:hover { background: #900; border-color: #f00; }
-        #status-box { margin-top: 20px; padding: 12px; background: #1a1a1a; border-radius: 4px; border: 1px solid #333; font-family: monospace; font-size: 13px; min-height: 40px; color: #00ffaa; }
-        audio { display: none; }
-        .audio-control { text-align: center; margin-bottom: 20px; }
-        .audio-control button { background: #222; border: 1px solid #ff0055; color: #fff; padding: 8px 15px; border-radius: 20px; cursor: pointer; }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GRoUpKh6r - Discord Control Panel</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <audio id="bgMusic" loop>
+        <source src="https://example.com/foreign-energetic-song.mp3" type="audio/mpeg">
+    </audio>
 
-<div class="container">
-    <header>
-        <h1>GRoUpKh6r#91 Nuker Panel</h1>
-        <p>Managed by VANTA | Absolute Speed & Control</p>
-    </header>
-
-    <div class="audio-control">
-        <button onclick="toggleAudio()">تشغيل الموسيقى الحماسية (درب مهالك)</button>
-        <!-- رابط يوتيوب المطلوب بصيغة مصدر صوتي مباشر أو فيديو -->
-        <audio id="bg-audio" loop>
-            <source src="https://www.youtube.com/watch?v=BdXFz8ESpLc" type="audio/mp4">
-        </audio>
-    </div>
-
-    <div class="grid">
-        <div>
-            <label>توكن الحساب أو البوت (Token)</label>
-            <input type="password" id="token" placeholder="MTI3... أو User Token">
-        </div>
-        <div>
-            <label>نوع الحساب</label>
-            <select id="isBot">
-                <option value="false">توكن حساب (User Token)</option>
-                <option value="true">توكن بوت (Bot Token)</option>
-            </select>
-        </div>
-        <div class="full">
-            <label>معرف السيرفر (Guild ID)</label>
-            <input type="text" id="guildId" placeholder="123456789012345678">
+    <div id="welcomeScreen" class="overlay">
+        <div class="welcome-box">
+            <h1>مرحباً بك في لوحة تحكم GRoUpKh6r</h1>
+            <p>تطوير: <strong>samba</strong></p>
+            <p class="rights">جميع الحقوق محفوظة لمجموعة GRoUpKh6r وللمطور samba.</p>
+            <button id="enterBtn" class="btn">دخول اللوحة (Welcome)</button>
         </div>
     </div>
 
-    <div class="section-title">إعدادات النصوص والأسماء</div>
-    <div class="grid">
-        <div>
-            <label>اسم الرومات / الرولات / الأعضاء الجديد</label>
-            <input type="text" id="targetName" value="GRoUpKh6r">
+    <div id="controlPanel" class="panel hidden">
+        <div class="sidebar">
+            <h2>GRoUpKh6r</h2>
+            <ul>
+                <li class="active" onclick="switchTab('target')">استهداف السيرفر</li>
+                <li onclick="switchTab('spam')">الهجوم والسبام</li>
+            </ul>
         </div>
-        <div>
-            <label>عدد الرومات / الرولات المنشأة</label>
-            <input type="number" id="count" value="30">
-        </div>
-        <div class="full">
-            <label>رسالة السبام واسم الويب هوك</label>
-            <input type="text" id="spamMessage" value="@everyone GRoUpKh6r#91 ON TOP https://youtu.be/BdXFz8ESpLc">
-            <input type="text" id="webhookName" value="GRoUpKh6r-Spam" style="margin-top: 5px;">
+        <div class="main-content">
+            <div id="targetTab" class="tab-content">
+                <h3>إعدادات الاتصال</h3>
+                <div class="form-group">
+                    <label>نوع التوكن:</label>
+                    <select id="tokenType">
+                        <option value="bot">Bot Token</option>
+                        <option value="user">Account Token</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>التوكن:</label>
+                    <input type="password" id="tokenInput" placeholder="أدخل التوكن هنا">
+                </div>
+                <div class="form-group">
+                    <label>معرف السيرفر (Server ID):</label>
+                    <input type="text" id="guildIdInput" placeholder="Server ID">
+                </div>
+                <div class="form-group">
+                    <label>الاسم المستهدف للروم/الرتب:</label>
+                    <input type="text" id="targetNameInput" placeholder="الاسم المطلوب">
+                </div>
+                <button class="btn" onclick="connectServer()">اتصال وتنفيذ العمليات</button>
+            </div>
+
+            <div id="spamTab" class="tab-content hidden">
+                <h3>السبام السريع والتحكم الشامل</h3>
+                <div class="form-group">
+                    <label>رسالة السبام (Webhook Spam):</label>
+                    <input type="text" id="spamMessageInput" placeholder="اكتب رسالة السبام هنا">
+                </div>
+                <button class="btn danger" onclick="startNukeAndSpam()">بدء التدمير والسبام الخارق</button>
+                <div id="logConsole" class="console"></div>
+            </div>
         </div>
     </div>
 
-    <div class="section-title">أوامر الدمار الشامل (Instant Execution)</div>
-    <div class="btn-grid">
-        <button class="action-btn" onclick="runAction('create_channels')">CREATE CHANNELS</button>
-        <button class="action-btn" onclick="runAction('create_roles')">CREATE ROLES</button>
-        <button class="action-btn" onclick="runAction('edit_channels')">EDIT CHANNELS</button>
-        <button class="action-btn" onclick="runAction('edit_roles')">EDIT ROLES</button>
-        <button class="action-btn danger" onclick="runAction('delete_channels')">DELETE CHANNELS</button>
-        <button class="action-btn danger" onclick="runAction('delete_roles')">DELETE ROLES</button>
-        <button class="action-btn" onclick="runAction('edit_server')">EDIT SERVER NAME</button>
-        <button class="action-btn" onclick="runAction('edit_members')">EDIT MEMBERS NAME</button>
-        <button class="action-btn danger" onclick="runAction('ban_all')">BAN ALL MEMBERS</button>
-        <button class="action-btn danger" onclick="runAction('kick_all')">KICK ALL MEMBERS</button>
-        <button class="action-btn" onclick="startSpam()">WEBHOOK SPAM START</button>
-        <button class="action-btn danger" onclick="stopSpam()">WEBHOOK SPAM STOP</button>
-    </div>
-
-    <div id="status-box">Status: Ready. Waiting for input...</div>
-</div>
-
-<script>
-    let currentSpamKey = null;
-
-    function toggleAudio() {
-        const audio = document.getElementById('bg-audio');
-        if (audio.paused) {
-            audio.play().catch(() => {
-                // استخدام بديل صوتي مباشر في حال حظر يوتيوب المباشر بالمتصفح
-                audio.src = "https://ia801502.us.archive.org/11/items/darb-mohalik/darb.mp3";
-                audio.play();
-            });
-            document.querySelector('.audio-control buttonexpressing').innerText = "إيقاف الموسيقى";
-        } else {
-            audio.pause();
-        }
-    }
-
-    async function runAction(action) {
-        const token = document.getElementById('token').value.trim();
-        const isBot = document.getElementById('isBot').value === 'true';
-        const guildId = document.getElementById('guildId').value.trim();
-        const targetName = document.getElementById('targetName').value.trim();
-        const count = parseInt(document.getElementById('count').value) || 10;
-        const spamMessage = document.getElementById('spamMessage').value;
-        const webhookName = document.getElementById('webhookName').value;
-
-        if (!token || !guildId) {
-            document.getElementById('status-box').innerText = "Error: Token and Guild ID are required!";
-            return;
-        }
-
-        document.getElementById('status-box').innerText = `Executing [${action}]... Please wait.`;
-
-        try {
-            const res = await fetch('/api/execute', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    token, isBot, guildId, action,
-                    data: { name: targetName, count, message: spamMessage, webhookName, spamKey: currentSpamKey }
-                })
-            });
-            const result = await res.json();
-            if (result.success) {
-                document.getElementById('status-box').innerText = `Success: ${result.message}`;
-                if (result.spamKey) currentSpamKey = result.spamKey;
-            } else {
-                document.getElementById('status-box').innerText = `Error: ${result.error}`;
-            }
-        } catch (err) {
-            document.getElementById('status-box').innerText = `Execution Error: ${err.message}`;
-        }
-    }
-
-    function startSpam() {
-        runAction('webhook_spam_start');
-    }
-
-    function stopSpam() {
-        runAction('webhook_spam_stop');
-    }
-</script>
-
+    <script src="app.js"></script>
 </body>
 </html>

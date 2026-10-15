@@ -1,14 +1,13 @@
 {
-  "name": "vanta-nuker-panel",
+  "name": "groupkh6r-panel",
   "version": "1.0.0",
-  "description": "GRoUpKh6r#91 Panel",
+  "description": "GRoUpKh6r Control Panel developed by samba",
   "main": "server.js",
-  "scripts": {
-    "start": "node server.js"
-  },
   "dependencies": {
     "express": "^4.19.2",
-    "discord.js": "^14.14.1",
-    "node-fetch": "^2.7.0"
+    "axios": "^1.6.8"
+  },
+  "scripts": {
+    "start": "node server.js"
   }
 }

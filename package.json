@@ -1,6 +1,6 @@
 {
   "name": "groupkh6r-panel",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "GRoUpKh6r Control Panel developed by samba",
   "main": "server.js",
   "dependencies": {
